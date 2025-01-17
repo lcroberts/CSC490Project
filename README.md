@@ -1,10 +1,10 @@
 # CSC 490 Project
 
-# Branch Hygine
+## Branch Hygiene
 
 When developing please branch off of dev. You can checkout dev with `git checkout dev`, then branch with `git checkout -b my_branch_name`. You can then push your branch with `git push -u origin my_branch_name`, this will set it up so that the branch automatically tracks the appropriate remote branch. Whenever you are ready for your branch to be merged into dev ensure that it is up to date with dev by running `git merge dev` and handling any merge conflicts. You can then open a PR in Github. Please request at least one other person to review your code before merging it.
 
-# Getting Started
+## Getting Started
 
 After cloning the repo the first thing you will want to do it copy `.env.example` to `.env`, you shouldn't have to do anything more with that for now.
 
@@ -31,10 +31,14 @@ composer run dev
 
 If you ever need more information check out the [Laravel docs](https://laravel.com/docs/11.x) or message Logan.
 
-# Adding JavaScript and CSS
+## IDE Autocompletion
+
+Out of the box your IDE may have issues detecting/completing certain things out of the box. [Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper) helps with this. If when you clone the repo you can run `php artisan ide-helper:generate`, `php artisan ide-helper:models`, and if you are running PHP Storm `php artisan ide-helper:meta`. This should fix any issues with hover documentation and completions.
+
+## Adding JavaScript and CSS
 
 Everything relating to what is displayed and ran on the client side is in the `resources` directory. To include css make sure it is imported into `resources/css/app.css`. To include JS make sure that it is imported into `resources/js/app.jsx`. Since this project was scaffolded using the Breeze starter kit that means all of our page layouts and templates are using react and inside of the `resources/js` directory as well. [Tailwindcss](https://tailwindcss.com/) is the CSS framework we are using so you are able to use any of it's functionality.
 
-# Adding Backend Functionality
+## Adding Backend Functionality
 
 The backend files are scattered across various directories. Anything database related such as migrations is in the `database` directory. Models and controllers are inside of the `app` directory. Those are the main directories you will need to know about. Any file can be added using `php artisan make`. For the most part you can leave the generated file as is, though for models I strongly advise removing the fact that it extends `Model`. This is related to eloquent, which is Laravel's ORM. While it might be useful in simple cases I have a feeling that as the project goes on and we encounter more difficult use cases it will become a hindrance. So I recommend just writing SQL and ignoring eloquent.
