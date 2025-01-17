@@ -2,7 +2,7 @@
 
 # Branch Hygine
 
-When developing please branch off of dev. You can checkout dev with `git checkout dev`, then branch with `git checkout -b my_branch_name`. You can then push your branch with `git push -u origin my_branch_name`, this will set it up so that the branch automatically tracks the appropriate remote branch.
+When developing please branch off of dev. You can checkout dev with `git checkout dev`, then branch with `git checkout -b my_branch_name`. You can then push your branch with `git push -u origin my_branch_name`, this will set it up so that the branch automatically tracks the appropriate remote branch. Whenever you are ready for your branch to be merged into dev ensure that it is up to date with dev by running `git merge dev` and handling any merge conflicts. You can then open a PR in Github. Please request at least one other person to review your code before merging it.
 
 # Getting Started
 
