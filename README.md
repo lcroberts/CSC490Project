@@ -1,5 +1,9 @@
 # CSC 490 Project
 
+# Branch Hygine
+
+When developing please branch off of dev. You can checkout dev with `git checkout dev`, then branch with `git checkout -b my_branch_name`. You can then push your branch with `git push -u origin my_branch_name`, this will set it up so that the branch automatically tracks the appropriate remote branch.
+
 # Getting Started
 
 After cloning the repo the first thing you will want to do it copy `.env.example` to `.env`, you shouldn't have to do anything more with that for now.
