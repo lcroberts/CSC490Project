@@ -42,3 +42,29 @@ Everything relating to what is displayed and ran on the client side is in the `r
 ## Adding Backend Functionality
 
 The backend files are scattered across various directories. Anything database related such as migrations is in the `database` directory. Models and controllers are inside of the `app` directory. Those are the main directories you will need to know about. Any file can be added using `php artisan make`. For the most part you can leave the generated file as is, though for models I strongly advise removing the fact that it extends `Model`. This is related to eloquent, which is Laravel's ORM. While it might be useful in simple cases I have a feeling that as the project goes on and we encounter more difficult use cases it will become a hindrance. So I recommend just writing SQL and ignoring eloquent.
+
+
+## Example Model, Controller, and Migration
+
+If you wish to see an example model, see `app/Models/ExampleModel.php`.
+
+If you wish to see an example controller see `app/Http/Controllers/ExampleModelController.php`.
+
+If you wish to see an example migration see `database/migrations/2025_01_25_144738_create_example_models_table.php`.
+
+### Adding A New Model
+
+A model is a class that represents a data object. In our case it might be something like a note. The model class is also where any database calls should be written. To make a model you can run `php artisan make:model`. This will pull up a few prompts, the first of which will be the name. The second prompt will be a drop down to select additional resources to create. If a database table does not already exist for the data object you will want to move to `Migration` and hit space to select it. If you are going to be creating routes to update or modify it you will likely want to create a `Resource Controller` as well. If you are unsure you can skip the resource controller for now and add it later if needed. Once the model is created remove the `extends Model`. See the example model for examples on how to do things.
+
+### Adding a Migration
+
+If you need to add a database migration to add or modify a database table you can do so with the following command: `php artisan make:migration`. See the example migration to see examples of how to create a table. Also please do not modify a migration once it is merged into dev. If you need to modify a table create a new migration that modifies a table.
+
+### Adding a Controller
+
+If you need to add a controller you can run `php artisan make:controller`. The example controller has some quick example methods.
+
+## Adding Routes
+
+There is a commented out block in `routes/web.php` with some examples of how to make routes.
+
