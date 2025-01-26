@@ -31,6 +31,27 @@ composer run dev
 
 If you ever need more information check out the [Laravel docs](https://laravel.com/docs/11.x) or message Logan.
 
+### S3 Setup
+
+To get S3 working you need to make sure you have everything properly set up in your `.env` file. If you have previously copied the example you may not have the section of it that looks like this:
+
+```bash
+# These can be found in a pinned message in the group chat
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+
+AWS_DEFAULT_REGION="us-east-1"
+AWS_BUCKET="csc-490"
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+# Should normally leave commented out. Only set if you want to use someone elses file root for testing purposes or if you want a fresh set of files.
+# AWS_S3_ROOT=
+```
+
+If you do not, replace any existing AWS environment variables with the above block. Also ensure you have run composer install if you are encountering errors after finishing the setup. Once you have put/found those into your `.env` file find the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in the discord group chat. Everything should work following this.
+
+To use S3 to access or store files there is a helper function in `App\Helpers\StorageHelpers.php` called `getS3Disk` this will return a [laravel disk facade](https://laravel.com/docs/11.x/filesystem#obtaining-disk-instances) that can be used to store and retrieve files. By default you are scoped to a folder of the bucket based off of your computers hostname as long as your `APP_ENV` variable is set to local. You can override this by passing a different root to the function or by setting the `AWS_S3_ROOT` variable in the `.env` file. For any questions please contact Logan.
+
 ## IDE Autocompletion
 
 Out of the box your IDE may have issues detecting/completing certain things out of the box. [Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper) helps with this. If when you clone the repo you can run `php artisan ide-helper:generate`, `php artisan ide-helper:models`, and if you are running PHP Storm `php artisan ide-helper:meta`. This should fix any issues with hover documentation and completions.
