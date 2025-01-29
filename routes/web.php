@@ -50,6 +50,10 @@ Route::middleware(['auth'])->group(function () {
     //         $obj->save($request->user()->id);
     //     });
     // });
+
+    Route::get('/editor', function () {
+        return Inertia::render('EditorTest', []);
+    })->name('editor');
 });
 
 // Unauthenticated routes go here
