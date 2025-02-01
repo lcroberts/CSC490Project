@@ -44,6 +44,7 @@ class RegisteredUserController extends Controller
         ]);
         $token = $user->createToken('api-token')->plainTextToken;
         $user->api_token = Crypt::encrypt($token);
+        $user->save();
 
         event(new Registered($user));
 

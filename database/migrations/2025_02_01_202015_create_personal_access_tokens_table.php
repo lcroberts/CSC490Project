@@ -25,7 +25,7 @@ return new class extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->text('api_token');
+            $table->text('api_token')->nullable();
         });
 
         foreach (User::all() as $user) {
