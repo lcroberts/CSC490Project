@@ -89,3 +89,6 @@ If you need to add a controller you can run `php artisan make:controller`. The e
 
 There is a commented out block in `routes/web.php` with some examples of how to make routes.
 
+### API Routes
+
+If you want to make API routes for the frontend to use you can add the routes to the route group in `routes/api.php`. All routes inside the group require authentication which is done automatically through the `useAxios` hook. Just ensure that any route using the hook is in a route group that requires authentication and has the `AddApiToken` middleware.
