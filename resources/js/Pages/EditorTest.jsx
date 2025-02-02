@@ -2,11 +2,11 @@ import { MarkdownEditor } from '@/Components/markdown-editor/MarkdownEditor';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function EditorTest({ }) {
-    return (
-        <AuthenticatedLayout>
-            <div className=''>
-                <MarkdownEditor editorId={"testEditor"} />
-            </div>
-        </AuthenticatedLayout>
-    );
+  return (
+    <AuthenticatedLayout>
+      <div className=''>
+        <MarkdownEditor editorId={"testEditor"} />
+      </div>
+    </AuthenticatedLayout>
+  );
 }
