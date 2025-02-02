@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\AddApiToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,7 +26,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Authenticated routes go here
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', AddApiToken::class])->group(function () {
     // Route::group([
     //     'prefix' => 'example', // Route prefix, in this case all routes in this group start with '/example/'
     //     'name' => 'example.', // Route name prefix, in this case all route names start with 'example.'

@@ -1,7 +1,7 @@
 import { MarkdownEditor } from '@/Components/markdown-editor/MarkdownEditor';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function EditorTest({ auth }) {
+export default function EditorTest({ }) {
   return (
     <AuthenticatedLayout>
       <div className=''>
