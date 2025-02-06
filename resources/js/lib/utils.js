@@ -5,6 +5,26 @@ export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * @param {string} base64
+ * @returns {Uint8Array}
+ */
+export function base64ToArray(base64) {
+  return new Uint8Array(
+    atob(base64)
+      .split("")
+      .map((c) => c.charCodeAt(0)),
+  );
+}
+
+/**
+ * @param {Uint8Array} array
+ * @returns {string}
+ */
+export function arrayToBase64(array) {
+  return btoa(String.fromCharCode.apply(null, array));
+}
+
 export async function generateEncryptionKey(password) {
   const encoder = new TextEncoder();
   const passwordBuffer = encoder.encode(password);
@@ -88,7 +108,7 @@ export async function encryptBuffer(buffer, key) {
   retBuffer.set(iv, 0);
   retBuffer.set(encrypted, iv.byteLength);
 
-  return btoa(String.fromCharCode.apply(null, retBuffer));
+  return arrayToBase64(retBuffer);
 }
 
 /**
@@ -97,11 +117,7 @@ export async function encryptBuffer(buffer, key) {
  * @returns {Promise<Uint8Array>} the decoded binary data
  */
 export async function decryptData(string, key) {
-  const encryptedBuffer = new Uint8Array(
-    atob(string)
-      .split("")
-      .map((c) => c.charCodeAt(0)),
-  );
+  const encryptedBuffer = base64ToArray(string);
 
   const iv = encryptedBuffer.slice(0, 12);
   const ciphertext = encryptedBuffer.slice(12);
