@@ -4,7 +4,7 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
-import { generateEncryptionKey } from '@/lib/utils';
+import { decryptString, encryptString, generateEncryptionKey, getEncryptionKey } from '@/lib/utils';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }) {
@@ -16,7 +16,14 @@ export default function Login({ status, canResetPassword }) {
 
   const submit = (e) => {
     e.preventDefault();
-    generateEncryptionKey(data.password);
+    generateEncryptionKey(data.password).then(async () => {
+      const key = await getEncryptionKey();
+      const string = "Hello World!";
+      const encrypted = await encryptString(string, key);
+      console.log(encrypted);
+      const decrypted = await decryptString(encrypted, key);
+      console.log(decrypted);
+    });
 
     post(route('login'), {
       onFinish: () => reset('password'),

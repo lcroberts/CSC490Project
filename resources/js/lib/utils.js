@@ -46,3 +46,50 @@ export async function getEncryptionKey() {
     ["decrypt", "encrypt"],
   );
 }
+
+/**
+ * @param {string} string
+ * @param {CryptoKey} key
+ */
+export async function encryptString(string, key) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: iv,
+    },
+    key,
+    new TextEncoder().encode(string),
+  );
+
+  const buffer = new Uint8Array(iv.byteLength + encrypted.byteLength);
+  buffer.set(iv, 0);
+  buffer.set(encrypted, iv.byteLength);
+
+  return btoa(String.fromCharCode.apply(null, buffer));
+}
+
+/**
+ * @param {string} string
+ * @param {CryptoKey} key
+ */
+export async function decryptString(string, key) {
+  const encryptedBuffer = new Uint8Array(
+    atob(string)
+      .split("")
+      .map((c) => c.charCodeAt(0)),
+  );
+
+  // buffers are the same
+  const iv = encryptedBuffer.slice(0, 12);
+  const ciphertext = encryptedBuffer.slice(12);
+  const plaintext = await crypto.subtle.decrypt(
+    {
+      name: "AES-GCM",
+      iv: iv,
+    },
+    key,
+    ciphertext,
+  );
+  return new TextDecoder().decode(plaintext);
+}
