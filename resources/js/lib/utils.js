@@ -54,13 +54,13 @@ export async function generateEncryptionKey(password) {
     ["encrypt", "decrypt"],
   );
   const exportKey = await crypto.subtle.exportKey("jwk", key);
-  localStorage.setItem("encryptionKey", JSON.stringify(exportKey));
+  localStorage.setItem("studdyBuddyEncryptionKey", JSON.stringify(exportKey));
 }
 
 export async function getEncryptionKey() {
   return await crypto.subtle.importKey(
     "jwk",
-    JSON.parse(localStorage.getItem("encryptionKey")),
+    JSON.parse(localStorage.getItem("studdyBuddyEncryptionKey")),
     "AES-GCM",
     false,
     ["decrypt", "encrypt"],
