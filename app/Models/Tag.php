@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Helpers\OpenAIHelpers;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\UnauthorizedException;
 use UnexpectedValueException;
 
 class Tag
@@ -69,6 +71,9 @@ class Tag
 
     private static function save(/* Note $note, */ string $content): int
     {
+        if (!Auth::check())
+            throw new UnauthorizedException("User must be authenticated to save tags.");
+
         $existing_tags = self::getByContent($content);
         if (!empty($existing_tags)) {
             // insert_into_notes_to_tags(note, tag)
@@ -78,11 +83,14 @@ class Tag
         //
         //  decodeIntoArray(text)
 
-        $params = ['content' => $content];
+        $params = [
+            'content' => $content,
+            'user_id' => Auth::id(),
+        ];
 
         $sql = "
-            INSERT INTO tags (created_at, content)
-            VALUES (timezone('utc', now()), :content);
+            INSERT INTO tags (created_at, user_id, content)
+            VALUES (timezone('utc', now()), :user_id, :content);
         ";
 
         try {
@@ -90,7 +98,7 @@ class Tag
             $id = DB::getPdo()->lastInsertId();
         } catch (QueryException $err) {
             $msg = __METHOD__ . ': ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
-            Log::err($msg);
+            Log::error($msg);
 
             throw $err;
         }

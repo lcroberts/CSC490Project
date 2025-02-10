@@ -3,7 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
 
 class TestTagCreation extends Command
 {
@@ -26,6 +28,8 @@ class TestTagCreation extends Command
      */
     public function handle()
     {
+        Auth::loginUsingId(1);
+
         print_r(Tag::generateAndSave(
             "Class: ENG201 (Section This Totally Is Real) - Samuel Johnson
             Firstly: show and tell exist on a spectrum. You shouldn't always tell either - the rule of thumb is just that people are more likely to tell too much and not show enough, and as such the common writing advice exists.
@@ -35,5 +39,7 @@ class TestTagCreation extends Command
         )); // Note sourced from myself on discord
 
         print_r(Tag::index());
+
+        Auth::logout();
     }
 }
