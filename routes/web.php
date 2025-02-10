@@ -57,6 +57,11 @@ Route::middleware(['auth', AddApiToken::class])->group(function () {
     })->name('editor');
 });
 
+// Here's a route where I'm testing the sidebar (Philip)
+Route::get('/sidebar', function () {
+    return Inertia::render('SidebarTest', []);
+})->name('sidebar');
+
 // Unauthenticated routes go here
 Route::middleware([])->group(function () {});
 

@@ -17,12 +17,12 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 
-// This is sample data
+// This is sample data until we use the database
 const data = {
   user: {
     name: "Philip Sijerkovic",
     email: "psijerkovic.ps@gmail.com",
-    avatar: "https://www.shutterstock.com/search/fish-avatar",
+    avatar: "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg",
   },
   navMain: [
     {
@@ -113,30 +113,6 @@ const data = {
       teaser:
         "I'm still working on adding database functionality to this part...",
     },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
   ],
 };
 
@@ -170,7 +146,7 @@ export function AppSidebar({ children, ...props }) {
                   </div>
                   <div className="flex flex-col text-left text-sm leading-tight">
                     <span className="truncate font-semibold">Study Buddy</span>
-                    <span className="truncate text-xs">Incorportated</span>
+                    <span className="truncate text-xs">Incorporated</span>
                   </div>
                 </a>
               </SidebarMenuButton>
