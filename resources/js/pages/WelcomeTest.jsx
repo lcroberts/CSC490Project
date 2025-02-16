@@ -1,196 +1,113 @@
-import { cn } from "@/lib/utils"
+import Navbar from '@/components/Navbar'
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { TypeAnimation } from 'react-type-animation'
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+
 
 export default function TestWelcome() {
   return (
-    <NavigationMenu>
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <div
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                  >
-                    <img src="\logo.png" alt="StudyBuddy Logo" className="h-6 w-6" />
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      StudyBuddy
-                    </div>
-                    <p className="text-sm leading-tight text-muted-foreground">
-                      Effortlessly capture ideas, organize thoughts, and access notes anytime, anywhere. 
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Introduction
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Re-usable components built using Radix UI and Tailwind CSS.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Installation
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      How to install dependencies and structure your app.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Typography
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Styles for headings, paragraphs, lists...etc
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Alert Dialog
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      A modal dialog that interrupts the user with important content
-                      and expects a response.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Hover Card
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      For sighted users to preview content available behind a link.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Progress
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Displays an indicator showing the completion progress of a task,
-                      typically displayed as a progress bar.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Scroll-area
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      Visually or semantically separates content.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Tabs
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      A set of layered sections of content—known as tab panels—that
-                      are displayed one at a time.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-              <li>
-                <NavigationMenuLink asChild>
-                  <div
-                    className={cn(
-                      "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                    )}
-                  >
-                    <div className="text-sm font-medium leading-none">
-                      Tooltip
-                    </div>
-                    <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                      A popup that displays information related to an element when the
-                      element receives keyboard focus or the mouse hovers over it.
-                    </p>
-                  </div>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
-  )
+    <div className="relative min-h-screen">
+      <div className="absolute top-0 left-0 flex items-center p-4">
+        <img src="https://github.com/philipdsijerkovic/Term-Project/blob/main/logo.png?raw=true" alt="StudyBuddy Logo" className="h-12 w-12" />
+        <span className="ml-2 text-xl font-medium">
+          <span className="gradient-text">Study</span>Buddy
+        </span>
+      </div>
+      <Separator orientation="vertical" className="absolute top-0 left-[200px] h-full" />
+      <Separator orientation="vertical" className="absolute top-0 right-[180px] h-full" />
+      
+      <div className="absolute top-0 right-0 flex items-center p-5">
+        <Button variant="primary">Signup</Button>
+        <Button variant="outline">Login</Button>
+      </div>
+      <div className="flex flex-grow items-center justify-center p-5">
+        <Navbar />
+      </div>
+      <Separator orientation="horizontal" className="w-full" />
+
+      <div className="flex flex-col items-center justify-center pb-8 h-screen">
+        <h1 className="text-9xl font-bold mb-4">
+        Ideas made  
+          <span className="gradient-text">{' '}
+            <TypeAnimation
+              sequence={[
+                'easy', 
+                2000, 
+                'fun', 
+                2000,
+                'secure',
+                2000,
+                'clear',
+                2000,
+                'smart',
+                2000,
+                'fast',
+                2000,
+                'simple',
+                2000,
+                'bold',
+                2000,
+                'quick',
+                2000,
+                () => {
+                  console.log('Sequence completed');
+                },
+              ]}
+              wrapper="span"
+              cursor={true}
+              repeat={Infinity}
+              style={{ display: 'inline-block' }}
+            />
+          </span>
+        </h1>
+        <p className="text-3xl mb-8">Your ultimate tool for organizing and accessing your study notes.</p>
+        <Button className="bg-orange-400 text-white hover:bg-red-400 text-lg" size="lg">Get Started</Button>
+      </div>
+
+      
+      <div className="flex flex-col items-center text-7xl font-bold mb-4">
+        <h1>Markdown Editor</h1>
+        <Separator orientation="horizontal" className="w-full" />
+        <h2 className="text-3xl font-bold mb-2 pt-3">
+          We utilize 
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Milkdown</Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-1">
+                <h4 className="font-semibold">Milkdown</h4>
+                <p className="text-sm">
+                  Milkdown is a plugin-driven WYSIWYG markdown editor framework.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          to handle all markdown related tasks.
+        </h2>
+      </div>
+
+      <div className="flex justify-center text-5xl font-bold mb-4">
+        <img src="./Photo.png" alt="Description of image" className="rounded-lg shadow-xl w-[1200px]" />
+      </div>
+
+      <div className="fixed top-1/2 left-0 transform -translate-y-1/2 text-center w-1/8 p-4">
+        <h2 className="text-xl font-bold mb-2">Table of Contents</h2>
+        <Separator orientation="horizontal" className="w-full mb-2" />
+        <div className="grid grid-cols-1 gap-1.5">
+          <Button variant="outline">Markdown Editor</Button>
+          <Button variant="outline">Media Upload</Button>
+          <Button variant="outline">Encryption</Button>
+          <Button variant="outline">Summarization</Button>
+          <Button variant="outline">Tagging</Button>
+          <Button variant="outline">Note Linking</Button>
+        </div>
+      </div>
+    </div>
+  );
 }

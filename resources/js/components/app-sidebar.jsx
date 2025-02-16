@@ -60,58 +60,34 @@ const data = {
     {
       name: "Philip Sijerkovic",
       email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
+      subject: "Fishing spots in North Carolina",
       date: "10:30",
       teaser:
-        "I'm still working on adding database functionality to this part...",
+        "The piedmont area is full of great fishing spots. A current favorite is the Lake Norman power plant.",
     },
     {
-      name: "Philip Sijerkovic",
+      name: "Yincheng Sun",
       email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
+      subject: "Grades",
+      date: "02/16/2025",
       teaser:
-        "I'm still working on adding database functionality to this part...",
+        "The group working on StudyBuddy all deserve A's for their hard work.",
     },
     {
-      name: "Philip Sijerkovic",
+      name: "Kendrick Lamar",
       email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
+      subject: "Ideas for songs",
+      date: "10/12/2024",
       teaser:
-        "I'm still working on adding database functionality to this part...",
+        "Drake has been dissing me lately, it's time to fire back. I think a diss track might be a good idea.",
     },
     {
-      name: "Philip Sijerkovic",
+      name: "John Smith",
       email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
+      subject: "Apple Pie Recipe",
+      date: "10/10/2024",
       teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
-    },
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Philip Sijerkovic",
-      date: "10:30",
-      teaser:
-        "I'm still working on adding database functionality to this part...",
+        "Ingredients: 1 cup sugar, 1 tsp salt, 2 1/2 cups all-purpose flour, 2 sticks butter, 1 tbsp cinnamon",
     },
   ],
 };
@@ -206,7 +182,7 @@ export function AppSidebar({ children, ...props }) {
           </div>
           <SidebarInput placeholder="Type to search..." />
         </SidebarHeader>
-        <SidebarContent>
+        <SidebarContent className="scrollbar">
           <SidebarGroup className="px-0">
             <SidebarGroupContent>
               {mails.map((mail) => (
