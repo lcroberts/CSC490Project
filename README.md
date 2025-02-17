@@ -31,6 +31,15 @@ composer run dev
 
 If you ever need more information check out the [Laravel docs](https://laravel.com/docs/11.x) or message Logan.
 
+### Issues on Windows
+
+If you are encountering issues on windows with running `php artisan serve` or `composer run dev` do the following.
+
+- Open a terminal and run `php --ini` and look for the line that says "Loaded Configuration File:"
+- Open the file at the path with `notepad C:\Path\To\File\Here`
+- Change `variables_order = "EGPCS"` to `variables_order = "GPCS"`
+- Save the file and reboot your PC
+
 ### S3 Setup
 
 To get S3 working you need to make sure you have everything properly set up in your `.env` file. If you have previously copied the example you may not have the section of it that looks like this:

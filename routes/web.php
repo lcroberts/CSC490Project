@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AddApiToken;
+use App\Http\Middleware\AddAuthStatus;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,7 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Authenticated routes go here
-Route::middleware(['auth', AddApiToken::class])->group(function () {
+Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(function () {
     // Route::group([
     //     'prefix' => 'example', // Route prefix, in this case all routes in this group start with '/example/'
     //     'name' => 'example.', // Route name prefix, in this case all route names start with 'example.'
@@ -67,6 +68,6 @@ Route::get('/testwelcome', function () {
 })->name('testwelcome');
 
 // Unauthenticated routes go here
-Route::middleware([])->group(function () {});
+Route::middleware([AddAuthStatus::class])->group(function () {});
 
 require __DIR__.'/auth.php';
