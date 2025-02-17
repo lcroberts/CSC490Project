@@ -8,7 +8,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 
-
 export default function TestWelcome() {
   return (
     <div className="relative min-h-screen">
@@ -65,15 +64,14 @@ export default function TestWelcome() {
             />
           </span>
         </h1>
-        <p className="text-3xl mb-8">Your ultimate tool for organizing and accessing your study notes.</p>
+        <p className="text-3xl mb-8">StudyBuddy is the ultimate tool for organizing and accessing your study notes.</p>
         <Button className="bg-orange-400 text-white hover:bg-red-400 text-lg" size="lg">Get Started</Button>
       </div>
 
-      
-      <div className="flex flex-col items-center text-7xl font-bold mb-4">
+      <div id="markdown-editor" className="flex flex-col items-center text-7xl font-bold mb-4">
         <h1>Markdown Editor</h1>
         <Separator orientation="horizontal" className="w-full" />
-        <h2 className="text-3xl font-bold mb-2 pt-3">
+        <h2 className="text-3xl font-bold mb-4 pt-4">
           We utilize 
           <HoverCard>
             <HoverCardTrigger asChild>
@@ -81,8 +79,7 @@ export default function TestWelcome() {
             </HoverCardTrigger>
             <HoverCardContent className="w-80">
               <div className="space-y-1">
-                <h4 className="font-semibold">Milkdown</h4>
-                <p className="text-sm">
+                <p className="text-lg">
                   Milkdown is a plugin-driven WYSIWYG markdown editor framework.
                 </p>
               </div>
@@ -96,16 +93,88 @@ export default function TestWelcome() {
         <img src="./Photo.png" alt="Description of image" className="rounded-lg shadow-xl w-[1200px]" />
       </div>
 
+      <div id="encryption" className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]">
+        <h1>Encryption</h1>
+        <Separator orientation="horizontal" className="w-full mt-3" />
+        <h2 className="text-3xl font-bold mb-4 pt-4">
+          We provide 
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Encryption</Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-1">
+                <p className="text-lg">
+                  All of your notes are encrypted to ensure your privacy.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          to handle all your media needs.
+        </h2>
+      </div>
+
+      <div id="summarization" className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]">
+        <h1>Summarization</h1>
+        <Separator orientation="horizontal" className="w-full mt-3" />
+        <h2 className="text-3xl font-bold mb-4 pt-4">
+          StudyBuddy offers a 
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Summarization</Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-1">
+                <p className="text-lg">
+                  Utilizing the OpenAI API, we can summarize your notes for you.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          feature that leverages AI to summarize your notes.
+        </h2>
+      </div>
+
+      <div id="tagging" className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]">
+        <h1>Tagging</h1>
+        <Separator orientation="horizontal" className="w-full mt-3" />
+        <h2 className="text-3xl font-bold mb-4 pt-4">
+          Users have the option to use our  
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Tagging</Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-1">
+                <p className="text-lg">
+                  Utilizing the OpenAI API, we can summarize your notes for you.
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
+          feature that uses AI add tags to your notes.
+        </h2>
+      </div>
+
       <div className="fixed top-1/2 left-0 transform -translate-y-1/2 text-center w-1/8 p-4">
         <h2 className="text-xl font-bold mb-2">Table of Contents</h2>
         <Separator orientation="horizontal" className="w-full mb-2" />
         <div className="grid grid-cols-1 gap-1.5">
-          <Button variant="outline">Markdown Editor</Button>
-          <Button variant="outline">Media Upload</Button>
-          <Button variant="outline">Encryption</Button>
+          <a href="#markdown-editor">
+            <Button variant="outline">Markdown Editor</Button>
+          </a>
+          <a href="#encryption">
+            <Button variant="outline">Encryption</Button>
+          </a>
+          <a href="#summarization">
           <Button variant="outline">Summarization</Button>
+          </a>
+          <a href="#tagging">
           <Button variant="outline">Tagging</Button>
-          <Button variant="outline">Note Linking</Button>
+          </a>
+          <a href="#note-linking">
+          <Button variant="outline">Note-Linking</Button>
+          </a>
         </div>
       </div>
     </div>
