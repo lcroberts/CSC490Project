@@ -12,15 +12,14 @@ createInertiaApp({
   title: (title) => `${title} - ${appName}`,
   resolve: (name) =>
     resolvePageComponent(
-      `./Pages/${name}.jsx`,
-      import.meta.glob('./Pages/**/*.jsx'),
+      `./pages/${name}.jsx`,
+      import.meta.glob('./pages/**/*.jsx'),
     ),
   setup({ el, App, props }) {
     const root = createRoot(el);
     if (props.initialPage.props.auth.user === null) {
       localStorage.clear(ENCRYPTION_KEY_NAME);
     }
-
     root.render(<App {...props} />);
   },
   progress: {
