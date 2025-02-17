@@ -2,19 +2,16 @@
 
 namespace App\Models;
 
-use App\Helpers\OpenAIHelpers;
-use Illuminate\Database\QueryException;
+use pp\Helpers\OpenAIHelpers;
+use DataInterval;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use UnexpectedValueException;
 
 class ImageDescription
 {
     public static function generateImageDescription($image, bool $force_generation = false): string
     {
-        $hash = Hash::make($image);
+        $hash = hash('sha256', $image);
         if ((!$force_generation) && (Cache::has($hash))) {
             return Cache::get($hash);
         }
@@ -34,7 +31,8 @@ class ImageDescription
 
         $description = $json->choices[0]->message->content;
 
-        Cache::add($hash, $description);
+        $duration = new DataInterval('P1W');
+        Cache::add($hash, $description, $duration);
 
         return $description;
     }
