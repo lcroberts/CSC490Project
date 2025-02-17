@@ -108,6 +108,54 @@ class Tag
         return $id;
     }
 
+    public static function getPageOfTags(int $limit, int $last_id = null)
+    {
+        // TODO: add retrieve by note when we actually have notes model
+        if (!Auth::check())
+            throw new UnauthorizedException("User must be authenticated to retrieve tags.");
+        
+        $params = [
+            'limit' => $limit,
+            'user_id' => Auth::id(),
+        ];
+
+        $sql = "";
+
+        if (is_null($last_id))
+        {
+            $sql .= "
+                SELECT * FROM tags
+                WHERE user_id = :user_id
+                LIMIT :limit;
+            ";
+        }
+        else
+        {
+            $params['last_id'] = $last_id;
+            // Figure out way to rewrite to use index later
+            $sql .= "
+                SELECT * FROM tags
+                WHERE user_id = :user_id
+                    AND id > :last_id
+                LIMIT :limit;
+            ";
+        }
+
+        try {
+            $res = DB::select($sql, $params);
+            if (empty($res)) {
+                $res = [];
+            }
+        } catch (QueryException $err) {
+            $msg = __METHOD__ . ": " . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
+            Log::error($msg);
+
+            throw $err;
+        }
+
+        return static::asObjectArray($res);
+    }
+
     private static function asObjectArray(array &$results): array
     {
         $res = [];
