@@ -9,4 +9,6 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_DB: ${DB_DATABASE}
     volumes:
-      - ./docker/postgres:/var/lib/postgresql/data:Z
+      - postgres-data:/var/lib/postgresql/data:Z
+volumes:
+  postgres-data:

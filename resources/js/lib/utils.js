@@ -1,6 +1,8 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export const ENCRYPTION_KEY_NAME = "studyBuddyEncryptionKey";
+
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
@@ -54,13 +56,13 @@ export async function generateEncryptionKey(password) {
     ["encrypt", "decrypt"],
   );
   const exportKey = await crypto.subtle.exportKey("jwk", key);
-  localStorage.setItem("studyBuddyEncryptionKey", JSON.stringify(exportKey));
+  localStorage.setItem(ENCRYPTION_KEY_NAME, JSON.stringify(exportKey));
 }
 
 export async function getEncryptionKey() {
   return await crypto.subtle.importKey(
     "jwk",
-    JSON.parse(localStorage.getItem("studyBuddyEncryptionKey")),
+    JSON.parse(localStorage.getItem(ENCRYPTION_KEY_NAME)),
     "AES-GCM",
     false,
     ["decrypt", "encrypt"],
