@@ -27,15 +27,15 @@ class TestImageDescription extends Command
      */
     public function handle()
     {
-    $image = fopen("filenamehere", "r") or die("Unable to open file!");
+        $image = "tests/TestData/Cardinal_image.jpg";
+    // Image provided by Logan via Discord.
 
-    if (empty($image)) {
-        throw new UnexpectedValueException("Empty image provided.");
-    }
+        if (!file_exists($image)) {
+        throw new UnexpectedValueException("Image file does not exist at provided path.");
+        }
 
-    $image_description = ImageDescription::generateImageDescription($image, true);
+        $image_description = ImageDescription::generateImageDescription($image, /*true*/);
 
-    echo $image_description . "\n";
-    fclose($image);
+        echo $image_description . "\n";
     }
 }
