@@ -13,7 +13,7 @@ class OpenAIHelpers
     private static function submitAny(string $endpoint, string $content)
     {
         $client = curl_init();
-        
+
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . env('OPENAI_KEY'),
@@ -60,5 +60,36 @@ class OpenAIHelpers
 
         $result = OpenAIHelpers::submitAny("chat/completions", $content);
         return $result;
+    }
+
+    /**
+     * Submits a request to audio transcription API.
+     * @param string $system Text payload for the prolog / system role
+     * @param string $user Text payload for the user prompt.
+     *
+     */
+
+    public static function submitTrancription(string $system, string $user)
+    {
+        $system = json_encode([
+            'role' => 'system',
+            'content' => $system,
+        ]);
+        $user = json_encode([
+            'role' => 'user',
+            'content' => $user,
+        ]);
+
+        $content = json_encode(array(
+            'model' => env('OPENAI_MODEL'),
+            'messages' => array(
+                array('role' => 'system', 'content' => $system),
+                array('role' => 'user', 'content' => $user),
+            ),
+        ));
+
+        $result = OpenAIHelpers::submitAny("audio/transcriptions", $content);
+        return $result;
+
     }
 }
