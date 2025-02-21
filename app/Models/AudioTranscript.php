@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use UnexpectedValueException;
 class AudioTranscript
 {
-    public static function getAudioTranscript($audio): string
+    public static function generateAudioTranscript($audio): string
     {
         /*
           $hash = hash('sha256', $note_content);
@@ -18,7 +18,9 @@ class AudioTranscript
 
         $response = OpenAIHelpers::submitTrancription(
             "You will be provided with an audio file delimited by three brackets. \
-            ",
+            Your task is to generate a full transcript of the audio file. \
+            Only include speech in the transcript, ignore any background noise. \
+            Ensure that the transcript is readable.",
             "{{{" . $audio . "}}}"
         );
 
