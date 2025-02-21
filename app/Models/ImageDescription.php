@@ -32,7 +32,7 @@ class ImageDescription
         if (empty($json)) {
             throw new UnexpectedValueException("Empty JSON object was returned from API while generating excerpts.");
         }
-
+        
         $description = $json->choices[0]->message->content;
 
         /*
