@@ -69,26 +69,31 @@ class OpenAIHelpers
      *
      */
 
-    public static function submitTrancription(string $system, string $user)
+    public static function submitTrancription(string $system, string $user, string $audio)
     {
         $system = json_encode([
             'role' => 'system',
             'content' => $system,
         ]);
-        $user = json_encode([
+        $user = json_encode([array(
             'role' => 'user',
-            'content' => $user,
+            'content' => array(
+                array('type' => 'text', 'text' => $user),
+                array('type' => 'input_audio',
+                    array('data' => $audio),
+                    'format' => 'mp3',)),
+            )
         ]);
 
         $content = json_encode(array(
-            'model' => env('OPENAI_MODEL'),
+            'model' => 'gpt-40-audio-preview',
             'messages' => array(
                 array('role' => 'system', 'content' => $system),
                 array('role' => 'user', 'content' => $user),
             ),
         ));
 
-        $result = OpenAIHelpers::submitAny("audio/transcriptions", $content);
+        $result = OpenAIHelpers::submitAny("chat/completions", $content);
         return $result;
 
     }
