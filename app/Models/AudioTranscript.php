@@ -10,6 +10,8 @@ class AudioTranscript
 {
     public static function generateAudioTranscript($audio): string
     {
+        $base64_audio = base64_encode(file_get_contents($audio));
+
         /*
           $hash = hash('sha256', $note_content);
           if ((! $force_generation) && (Cache::has($hash))) {
@@ -17,10 +19,11 @@ class AudioTranscript
          */
 
         $response = OpenAIHelpers::submitTrancription(
-            "You will be provided with an audio file delimited by three brackets. \
+            "You will be provided with an audio file encoded in base64 that is delimited by three brackets. \
             Your task is to generate a full transcript of the audio file. \
             Only include speech in the transcript, ignore any background noise. \
             Ensure that the transcript is readable.",
+            "What is in this recording?",
             "{{{" . $audio . "}}}"
         );
 

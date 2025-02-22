@@ -27,7 +27,7 @@ class TestAudioTranscript extends Command
      */
     public function handle()
     {
-        $file = "path/to/audio/transcript.mp3";
+        $file = "tests/TestData/General American 1 ｜ IDEA： International Dialects of English Archive (1) [general-american-1-1].mp3";
 
         if (!file_exists($file)) {
             throw new UnexpectedValueException("Audio transcript not found.");
@@ -35,6 +35,6 @@ class TestAudioTranscript extends Command
 
         $audio_transcript = AudioTranscript::generateAudioTranscript($file);
 
-        printr($audio_transcript);
+        print_r($audio_transcript);
     }
 }

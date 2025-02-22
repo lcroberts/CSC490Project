@@ -80,9 +80,8 @@ class OpenAIHelpers
             'content' => array(
                 array('type' => 'text', 'text' => $user),
                 array('type' => 'input_audio',
-                    array('data' => $audio),
-                    'format' => 'mp3',)),
-            )
+                    'input_audio' => array('data' => $audio, 'format' => 'mp3')),
+            ))
         ]);
 
         $content = json_encode(array(
