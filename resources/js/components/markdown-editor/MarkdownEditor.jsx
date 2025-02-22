@@ -4,7 +4,8 @@ import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
-import MarkdownLogPlugin from './MarkdownLogPlugin';
+// import MarkdownLogPlugin from './MarkdownLogPlugin';
+import HandleLinkPlugin from './AutoInsertImage';
 
 const MilkdownEditor = ({defaultValue = ""}) => {
   // `get` returns the editor info
@@ -13,8 +14,11 @@ const MilkdownEditor = ({defaultValue = ""}) => {
       root: root,
       defaultValue: defaultValue,
     });
-    crepe.editor.use(DisableAutoEscapeBrackets);
-    crepe.editor.use(MarkdownLogPlugin);
+    crepe.editor.use([
+      DisableAutoEscapeBrackets,
+      HandleLinkPlugin,
+    ]);
+    // crepe.editor.use(MarkdownLogPlugin);
     return crepe;
   });
 
