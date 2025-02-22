@@ -71,8 +71,8 @@ class OpenAIHelpers
             'role' => 'user',
             'content' => array(
                 array('type' => 'text', 'text' => $user),
-                array('type' => 'image_url', 'image_url' => $image)
-            )],
+                array('type' => 'image_url', 'image_url' => array('url' => $image)),
+            ),
         ]);
 
         $content = json_encode(array(
