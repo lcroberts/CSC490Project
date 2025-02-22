@@ -13,7 +13,7 @@ class OpenAIHelpers
     private static function submitAny(string $endpoint, string $content)
     {
         $client = curl_init();
-        
+
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . env('OPENAI_KEY'),
@@ -56,6 +56,31 @@ class OpenAIHelpers
                 array('role' => 'system', 'content' => $system),
                 array('role' => 'user', 'content' => $user),
             ),
+        ));
+
+        $result = OpenAIHelpers::submitAny("chat/completions", $content);
+        return $result;
+    }
+
+    public static function submitImage(string $system, string $user, string $image){
+        $system = json_encode([
+            'role' => 'system',
+            'content' => $system,
+        ]);
+        $user = json_encode([
+            'role' => 'user',
+            'content' => array(
+                array('type' => 'text', 'text' => $user),
+                array('type' => 'image_url', 'image_url' => $image)
+            )],
+        ]);
+
+        $content = json_encode(array(
+            'model' => env('OPENAI_MODEL'),
+            'messages' => array(
+                array('role' => 'system', 'content' => $system),
+                array('role' => 'user', 'content' => $user),
+            )
         ));
 
         $result = OpenAIHelpers::submitAny("chat/completions", $content);
