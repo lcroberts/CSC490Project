@@ -12,9 +12,10 @@ import { useContext } from "react";
  * Wraps AppContext so that we can use this to get type hinting via jsdoc
  * @returns {{
  * notes: Note[]
+ * activeNote: ?Number
  * }}
  */
-export default function useAppstate() {
+export default function useAppState() {
   const state = useContext(AppContext);
 
   return state;

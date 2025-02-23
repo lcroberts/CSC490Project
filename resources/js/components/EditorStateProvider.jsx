@@ -101,6 +101,8 @@ Saltwater Fishing:
     },
   ];
 
+  val.activeNote = null;
+
   return (
     <AppContext.Provider value={val}>
       {children}

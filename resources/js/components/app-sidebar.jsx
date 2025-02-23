@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
 import { usePage } from "@inertiajs/react";
-import useAppstate from "@/hooks/useAppState";
+import useAppState from "@/hooks/useAppState";
 
 // This is sample data until we use the database
 const data = {
@@ -56,16 +56,17 @@ const data = {
   ],
 };
 
+const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
 export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const { setOpen } = useSidebar();
-  const user = useState({
+  const user = {
     ...usePage().props.auth.user,
-    avatar: "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg",
-  })
-  const { notes } = useAppstate();
+    avatar: avatar,
+  }
+  const { notes } = useAppState();
 
   return (
     <Sidebar
