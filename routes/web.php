@@ -67,6 +67,10 @@ Route::get('/testwelcome', function () {
     return Inertia::render('WelcomeTest', []);
 })->name('testwelcome');
 
+Route::get('/testlogin', function () {
+    return Inertia::render('LoginTest', []);
+})->name('testlogin');
+
 // Unauthenticated routes go here
 Route::middleware([AddAuthStatus::class])->group(function () {});
 
