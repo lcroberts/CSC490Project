@@ -7,12 +7,12 @@ import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
 // import MarkdownLogPlugin from './MarkdownLogPlugin';
 import HandleLinkPlugin from './AutoInsertImage';
 
-const MilkdownEditor = ({defaultValue = ""}) => {
+const MilkdownEditor = ({defaultContent}) => {
   // `get` returns the editor info
   const { get } = useEditor((root) => {
     const crepe = new Crepe({
       root: root,
-      defaultValue: defaultValue,
+      defaultValue: defaultContent,
     });
     crepe.editor.use([
       DisableAutoEscapeBrackets,
@@ -25,10 +25,10 @@ const MilkdownEditor = ({defaultValue = ""}) => {
   return <Milkdown />;
 };
 
-export const MarkdownEditor = () => {
+export const MarkdownEditor = ({defaultContent}) => {
   return (
     <MilkdownProvider>
-      <MilkdownEditor />
+      <MilkdownEditor defaultContent={defaultContent} />
     </MilkdownProvider>
   );
 };

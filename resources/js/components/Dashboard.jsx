@@ -15,9 +15,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { usePage } from '@inertiajs/react';
+import useAppState from '@/hooks/useAppState';
 
 export default function Dashboard() {
   const user = usePage().props.auth.user;
+  const { notes, activeNote } = useAppState()
   return (
     <SidebarProvider
       style={{
@@ -42,7 +44,15 @@ export default function Dashboard() {
           </Breadcrumb>
         </header>
         <div className='flex-1'>
-          <MarkdownEditor editorId={"testEditor"} />
+          {activeNote !== null ?
+            <MarkdownEditor key={activeNote} defaultContent={notes[activeNote].content} />
+            :
+            <div className='h-full flex'>
+              <h1 className='mx-auto my-auto text-3xl'>
+                Select a note to get started
+              </h1>
+            </div>
+          }
         </div>
       </SidebarInset>
     </SidebarProvider>
