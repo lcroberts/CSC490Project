@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -16,9 +15,9 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { generateEncryptionKey } from '@/lib/utils';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 
-export default function LoginTest({ status, canResetPassword }) {
+export default function LoginTest({ canResetPassword, register }) {
   const { data: loginData, setData: setLoginData, post: loginPost, processing: loginProcessing, errors: loginErrors, reset: loginReset } = useForm({
     email: '',
     password: '',
@@ -51,12 +50,12 @@ export default function LoginTest({ status, canResetPassword }) {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue={register ? "register" : "login"} className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="account">Register</TabsTrigger>
-          <TabsTrigger value="password">Login</TabsTrigger>
+          <TabsTrigger value="register">Register</TabsTrigger>
+          <TabsTrigger value="login">Login</TabsTrigger>
         </TabsList>
-        <TabsContent value="account">
+        <TabsContent value="register">
           <Card>
             <CardHeader>
               <CardTitle>Account</CardTitle>
@@ -122,7 +121,7 @@ export default function LoginTest({ status, canResetPassword }) {
             </CardContent>
           </Card>
         </TabsContent>
-        <TabsContent value="password">
+        <TabsContent value="login">
           <Card>
             <CardHeader>
               <CardTitle>Login</CardTitle>

@@ -3,22 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\AddApiToken;
 use App\Http\Middleware\AddAuthStatus;
-use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -27,7 +14,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Authenticated routes go here
-Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(function () {
+Route::middleware(['auth', 'verified', AddApiToken::class, AddAuthStatus::class])->group(function () {
     // Route::group([
     //     'prefix' => 'example', // Route prefix, in this case all routes in this group start with '/example/'
     //     'name' => 'example.', // Route name prefix, in this case all route names start with 'example.'
@@ -56,22 +43,24 @@ Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(fun
     Route::get('/editor', function () {
         return Inertia::render('EditorTest', []);
     })->name('editor');
+
+    // Here's a route where I'm testing the sidebar (Philip)
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard', []);
+    })->name('dashboard');
 });
 
-// Here's a route where I'm testing the sidebar (Philip)
-Route::get('/sidebar', function () {
-    return Inertia::render('SidebarTest', []);
-})->name('sidebar');
-
-Route::get('/testwelcome', function () {
-    return Inertia::render('WelcomeTest', []);
-})->name('testwelcome');
-
-Route::get('/testlogin', function () {
-    return Inertia::render('LoginTest', []);
-})->name('testlogin');
-
 // Unauthenticated routes go here
-Route::middleware([AddAuthStatus::class])->group(function () {});
+Route::middleware([AddAuthStatus::class])->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('WelcomeTest', []);
+    })->name('welcome');
+    Route::get('/login', function (Request $request) {
+        $register = $request->input("register") ?? "false";
+        return Inertia::render('LoginTest', [
+            "register" => $register === "true",
+        ]);
+    })->name('login');
+});
 
 require __DIR__.'/auth.php';

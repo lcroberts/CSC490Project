@@ -1,5 +1,4 @@
 import { MarkdownEditor } from '@/components/markdown-editor/MarkdownEditor';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout';
 import { AppSidebar } from '@/components/app-sidebar';
 import {
   Breadcrumb,
@@ -15,8 +14,12 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { usePage } from '@inertiajs/react';
+import useAppState from '@/hooks/useAppState';
 
-export default function SidebarTest() {
+export default function Dashboard() {
+  const user = usePage().props.auth.user;
+  const { notes, activeNote } = useAppState()
   return (
     <SidebarProvider
       style={{
@@ -35,13 +38,21 @@ export default function SidebarTest() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>Philip Sijerkovic</BreadcrumbPage>
+                <BreadcrumbPage>{user?.name}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </header>
         <div className='flex-1'>
-          <MarkdownEditor editorId={"testEditor"} />
+          {activeNote !== null ?
+            <MarkdownEditor key={activeNote} defaultContent={notes[activeNote].content} />
+            :
+            <div className='h-full flex'>
+              <h1 className='mx-auto my-auto text-3xl'>
+                Select a note to get started
+              </h1>
+            </div>
+          }
         </div>
       </SidebarInset>
     </SidebarProvider>

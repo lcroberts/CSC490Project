@@ -20,10 +20,18 @@ export default function TestWelcome() {
       </div>
       <Separator orientation="vertical" className="absolute top-0 left-[200px] h-full" />
       <Separator orientation="vertical" className="absolute top-0 right-[180px] h-full" />
-      
+
       <div className="absolute top-0 right-0 flex items-center p-5">
-        <Button variant="primary">Signup</Button>
-        <Button variant="outline" className="bg-orange-400 text-white">Login</Button>
+        <Button variant="primary">
+          <a href="/login?register=true">
+            Signup
+          </a>
+        </Button>
+        <Button variant="outline" className="bg-orange-400 text-white">
+          <a href="/login?register=false">
+            Login
+          </a>
+        </Button>
       </div>
       <div className="flex flex-grow items-center justify-center p-5">
         <Navbar />
@@ -32,13 +40,13 @@ export default function TestWelcome() {
 
       <div className="flex flex-col items-center justify-center pb-8 h-screen">
         <h1 className="text-9xl font-bold mb-4">
-        Ideas made  
+          Ideas made
           <span className="gradient-text">{' '}
             <TypeAnimation
               sequence={[
-                'easy', 
-                2000, 
-                'fun', 
+                'easy',
+                2000,
+                'fun',
                 2000,
                 'secure',
                 2000,
@@ -73,7 +81,7 @@ export default function TestWelcome() {
         <h1>Markdown Editor</h1>
         <Separator orientation="horizontal" className="w-full" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          We utilize 
+          We utilize
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Milkdown</Button>
@@ -98,7 +106,7 @@ export default function TestWelcome() {
         <h1>Encryption</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          We provide 
+          We provide
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Encryption</Button>
@@ -119,7 +127,7 @@ export default function TestWelcome() {
         <h1>Summarization</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          StudyBuddy offers a 
+          StudyBuddy offers a
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Summarization</Button>
@@ -140,7 +148,7 @@ export default function TestWelcome() {
         <h1>Tagging</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          Users have the option to use our  
+          Users have the option to use our
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Tagging</Button>
@@ -168,13 +176,13 @@ export default function TestWelcome() {
             <Button variant="outline">Encryption</Button>
           </a>
           <a href="#summarization">
-          <Button variant="outline">Summarization</Button>
+            <Button variant="outline">Summarization</Button>
           </a>
           <a href="#tagging">
-          <Button variant="outline">Tagging</Button>
+            <Button variant="outline">Tagging</Button>
           </a>
           <a href="#note-linking">
-          <Button variant="outline">Note-Linking</Button>
+            <Button variant="outline">Note-Linking</Button>
           </a>
         </div>
       </div>

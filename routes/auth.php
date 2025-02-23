@@ -17,8 +17,8 @@ Route::middleware('guest')->group(function () {
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])
-        ->name('login');
+    /* Route::get('login', [AuthenticatedSessionController::class, 'create']) */
+    /*     ->name('login'); */
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
@@ -54,6 +54,6 @@ Route::middleware('auth')->group(function () {
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
-    Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+    Route::get('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });
