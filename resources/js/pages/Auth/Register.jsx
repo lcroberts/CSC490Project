@@ -3,6 +3,7 @@ import InputLabel from '@/components/InputLabel';
 import PrimaryButton from '@/components/PrimaryButton';
 import TextInput from '@/components/TextInput';
 import GuestLayout from '@/layouts/GuestLayout';
+import { generateEncryptionKey } from '@/lib/utils';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
@@ -15,6 +16,7 @@ export default function Register() {
 
   const submit = (e) => {
     e.preventDefault();
+    generateEncryptionKey(data.password);
 
     post(route('register'), {
       onFinish: () => reset('password', 'password_confirmation'),
