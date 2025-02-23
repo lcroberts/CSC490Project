@@ -1,4 +1,5 @@
 import AppContext from "@/context/AppContext";
+import { useState } from "react";
 
 /**
  * Wraps anything that requires access to application state. Hanldes
@@ -101,7 +102,9 @@ Saltwater Fishing:
     },
   ];
 
-  val.activeNote = null;
+  const [activeNote, setActiveNote] = useState(null);
+  val.activeNote = activeNote;
+  val.setActiveNote = setActiveNote;
 
   return (
     <AppContext.Provider value={val}>

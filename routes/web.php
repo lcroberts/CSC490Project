@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified', AddApiToken::class, AddAuthStatus::class]
 
     // Here's a route where I'm testing the sidebar (Philip)
     Route::get('/dashboard', function () {
-        return Inertia::render('SidebarTest', []);
+        return Inertia::render('Dashboard', []);
     })->name('dashboard');
 });
 
@@ -56,8 +56,9 @@ Route::middleware([AddAuthStatus::class])->group(function () {
         return Inertia::render('WelcomeTest', []);
     })->name('welcome');
     Route::get('/login', function (Request $request) {
+        $register = $request->input("register") ?? "false";
         return Inertia::render('LoginTest', [
-            "register" => $request->input("register") ?? false,
+            "register" => $register === "true",
         ]);
     })->name('login');
 });

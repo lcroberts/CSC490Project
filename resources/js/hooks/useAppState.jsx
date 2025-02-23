@@ -13,6 +13,7 @@ import { useContext } from "react";
  * @returns {{
  * notes: Note[]
  * activeNote: ?Number
+ * setActiveNote: Function
  * }}
  */
 export default function useAppState() {
