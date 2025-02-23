@@ -1,12 +1,13 @@
-import Navbar from '@/components/Navbar'
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { TypeAnimation } from 'react-type-animation'
+import Navbar from '@/components/Navbar';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { TypeAnimation } from 'react-type-animation';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card"
+} from "@/components/ui/hover-card";
+
 
 export default function TestWelcome() {
   return (
@@ -22,7 +23,7 @@ export default function TestWelcome() {
       
       <div className="absolute top-0 right-0 flex items-center p-5">
         <Button variant="primary">Signup</Button>
-        <Button variant="outline">Login</Button>
+        <Button variant="outline" className="bg-orange-400 text-white">Login</Button>
       </div>
       <div className="flex flex-grow items-center justify-center p-5">
         <Navbar />
@@ -65,7 +66,7 @@ export default function TestWelcome() {
           </span>
         </h1>
         <p className="text-3xl mb-8">StudyBuddy is the ultimate tool for organizing and accessing your study notes.</p>
-        <Button className="bg-orange-400 text-white hover:bg-red-400 text-lg" size="lg">Get Started</Button>
+        <Button className="bg-orange-400 text-white hover:bg-red-400 hover:shadow-lg hover:shadow-red-400/50 text-lg hover-animate-glow" size="lg">Get Started</Button>
       </div>
 
       <div id="markdown-editor" className="flex flex-col items-center text-7xl font-bold mb-4">
