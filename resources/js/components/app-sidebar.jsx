@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react";
 import { NavUser } from "@/components/nav-user";
 import { Label } from "@/components/ui/label";
@@ -16,14 +17,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { Switch } from "@/components/ui/switch";
+import { usePage } from "@inertiajs/react";
+import useAppstate from "@/hooks/useAppState";
 
 // This is sample data until we use the database
 const data = {
-  user: {
-    name: "Philip Sijerkovic",
-    email: "psijerkovic.ps@gmail.com",
-    avatar: "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg",
-  },
   navMain: [
     {
       title: "Notes",
@@ -56,48 +54,18 @@ const data = {
       isActive: false,
     },
   ],
-  mails: [
-    {
-      name: "Philip Sijerkovic",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Fishing spots in North Carolina",
-      date: "10:30",
-      teaser:
-        "The piedmont area is full of great fishing spots. A current favorite is the Lake Norman power plant.",
-    },
-    {
-      name: "Yincheng Sun",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Grades",
-      date: "02/16/2025",
-      teaser:
-        "The group working on StudyBuddy all deserve A's for their hard work.",
-    },
-    {
-      name: "Kendrick Lamar",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Ideas for songs",
-      date: "10/12/2024",
-      teaser:
-        "Drake has been dissing me lately, it's time to fire back. I think a diss track might be a good idea.",
-    },
-    {
-      name: "John Smith",
-      email: "pdsijerkovi@uncg.edu",
-      subject: "Apple Pie Recipe",
-      date: "10/10/2024",
-      teaser:
-        "Ingredients: 1 cup sugar, 1 tsp salt, 2 1/2 cups all-purpose flour, 2 sticks butter, 1 tbsp cinnamon",
-    },
-  ],
 };
 
 export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
-  const [mails, setMails] = React.useState(data.mails);
   const { setOpen } = useSidebar();
+  const user = useState({
+    ...usePage().props.auth.user,
+    avatar: "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg",
+  })
+  const { notes } = useAppstate();
 
   return (
     <Sidebar
@@ -164,7 +132,7 @@ export function AppSidebar({ children, ...props }) {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={user} />
         </SidebarFooter>
       </Sidebar>
       {/* This is the second sidebar */}
@@ -185,19 +153,19 @@ export function AppSidebar({ children, ...props }) {
         <SidebarContent className="scrollbar">
           <SidebarGroup className="px-0">
             <SidebarGroupContent>
-              {mails.map((mail) => (
+              {notes.map((note, idx) => (
                 <a
                   href="#"
-                  key={mail.email}
+                  key={idx}
                   className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 >
                   <div className="flex w-full items-center gap-2">
-                    <span>{mail.name}</span>{" "}
-                    <span className="ml-auto text-xs">{mail.date}</span>
+                    <span>{user?.name}</span>{" "}
+                    <span className="ml-auto text-xs">{note.createdAt}</span>
                   </div>
-                  <span className="font-medium">{mail.subject}</span>
+                  <span className="font-medium">{note.title}</span>
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-                    {mail.teaser}
+                    {note.content}
                   </span>
                 </a>
               ))}
