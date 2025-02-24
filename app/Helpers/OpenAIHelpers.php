@@ -34,7 +34,7 @@ class OpenAIHelpers
      * Submits a request to the chat completion API.
      *
      * @param string    $system Text payload for the prolog / system role
-     * @param string    $user   Text payload fro the user prompt.
+     * @param string    $user   Text payload for the user prompt.
      *
      * To create similar function calls for other endpoints, simply submitAny to the requisite
      * endpoint after doing whatever data translation is required.
