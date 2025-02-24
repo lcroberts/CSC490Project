@@ -94,7 +94,7 @@ export default function Dashboard() {
                 <DialogContent className="bg-white text-black">
                   <DialogTitle>Summary</DialogTitle>
                   <DialogDescription className="text-gray-500">
-                    This is the content of the dialog.
+                    Here is a summary of the text you requested
                   </DialogDescription>
                   <div className="flex min-h-[80px] w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
                     <TypeAnimation
