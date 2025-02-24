@@ -27,12 +27,12 @@ class TestImageDescription extends Command
      */
     public function handle()
     {
-        $image = "tests/TestData/Cardinal_image.jpg";
+        $image = "https://www.wiley.com/storefront-pdp-assets/_next/image?url=https%3A%2F%2Fmedia.wiley.com%2Fproduct_data%2FcoverImage300%2F66%2F11198003%2F1119800366.jpg&w=640&q=75";
     // Image provided by Logan via Discord.
 
-        if (!file_exists($image)) {
+       /* if (!file_exists($image)) {
         throw new UnexpectedValueException("Image file does not exist at provided path.");
-        }
+        } */
 
         $image_description = ImageDescription::generateImageDescription($image, /*true*/);
 

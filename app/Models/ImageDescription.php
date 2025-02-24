@@ -13,20 +13,20 @@ class ImageDescription
     public static function generateImageDescription(string $image, /* bool $force_generation = false */): string
     {
         // Encode image in base64 to send to API
-        $base64_image = base64_encode(file_get_contents($image));
+        // $base64_image = base64_encode(file_get_contents($image));
 
-        /* $hash = hash('sha256', $image);
+        /* $hash = hash('sha256', $base64_image);
         if ((!$force_generation) && (Cache::has($hash))) {
             return Cache::get($hash);
         } */
 
         $response = OpenAIHelpers::submitImage(
-            "You will be provided with an image file encoded in base64 delimited by three brackets. \
+            "You will be provided with an image file delimited by three brackets. \
             Your task is to provide a one paragraph description of the image. \
             Ensure that the description is detailed and thorough, providing all necessary information to understand the content of the image. \
             Rely only on the provided image, do not include external information.",
             "What is in this image?",
-            "{{{" . $base64_image . "}}}"
+            "{{{" . $image . "}}}"
         );
 
         $json = json_decode($response);
