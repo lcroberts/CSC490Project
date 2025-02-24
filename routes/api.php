@@ -8,3 +8,4 @@ Route::middleware(['auth:sanctum'])->name('api.')->group(function () {
         return $request->user();
     })->name('user');
 });
+
