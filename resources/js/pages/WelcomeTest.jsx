@@ -8,7 +8,6 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
-
 export default function TestWelcome() {
   return (
     <div className="relative min-h-screen">
@@ -74,7 +73,10 @@ export default function TestWelcome() {
           </span>
         </h1>
         <p className="text-3xl mb-8">StudyBuddy is the ultimate tool for organizing and accessing your study notes.</p>
-        <Button className="bg-orange-400 text-white hover:bg-red-400 hover:shadow-lg hover:shadow-red-400/50 text-lg hover-animate-glow" size="lg">Get Started</Button>
+        <Button className="bg-orange-400 text-white hover:bg-red-400 hover:shadow-lg hover:shadow-red-400/50 text-lg hover-animate-glow" size="lg">
+        <a href="/login?register=true">
+          Get Started
+          </a></Button>
       </div>
 
       <div id="markdown-editor" className="flex flex-col items-center text-7xl font-bold mb-4">
@@ -170,19 +172,19 @@ export default function TestWelcome() {
         <Separator orientation="horizontal" className="w-full mb-2" />
         <div className="grid grid-cols-1 gap-1.5">
           <a href="#markdown-editor">
-            <Button variant="outline">Markdown Editor</Button>
+            <Button variant="outline" className="w-full">Markdown Editor</Button>
           </a>
           <a href="#encryption">
-            <Button variant="outline">Encryption</Button>
+            <Button variant="outline" className="w-full">Encryption</Button>
           </a>
           <a href="#summarization">
-            <Button variant="outline">Summarization</Button>
+            <Button variant="outline" className="w-full">Summarization</Button>
           </a>
           <a href="#tagging">
-            <Button variant="outline">Tagging</Button>
+            <Button variant="outline" className="w-full">Tagging</Button>
           </a>
           <a href="#note-linking">
-            <Button variant="outline">Note-Linking</Button>
+            <Button variant="outline" className="w-full">Note-Linking</Button>
           </a>
         </div>
       </div>

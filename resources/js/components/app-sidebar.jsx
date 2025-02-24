@@ -61,6 +61,7 @@ export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
+  const [activeNoteIndex, setActiveNoteIndex] = React.useState(null);
   const { setOpen } = useSidebar();
   const user = {
     ...usePage().props.auth.user,
@@ -111,13 +112,6 @@ export function AppSidebar({ children, ...props }) {
                       }}
                       onClick={() => {
                         setActiveItem(item);
-                        const mail = data.mails.sort(() => Math.random() - 0.5);
-                        setMails(
-                          mail.slice(
-                            0,
-                            Math.max(5, Math.floor(Math.random() * 10) + 1)
-                          )
-                        );
                         setOpen(true);
                       }}
                       isActive={activeItem.title === item.title}
@@ -157,8 +151,11 @@ export function AppSidebar({ children, ...props }) {
               {notes.map((note, idx) => (
                 <div
                   key={idx}
-                  className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                  onClick={(e) => setActiveNote(idx)}
+                  className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNoteIndex === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
+                  onClick={() => {
+                    setActiveNoteIndex(idx);
+                    setActiveNote(idx);
+                  }}
                 >
                   <div className="flex w-full items-center gap-2">
                     <span>{user?.name}</span>{" "}
@@ -168,6 +165,12 @@ export function AppSidebar({ children, ...props }) {
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
                     {note.content}
                   </span>
+                  <div className="flex gap-2 mt-2">
+                    <span className="bg-red-400 text-white text-xs px-2 py-1 rounded">Fishing</span>
+                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Cooking</span>
+                    <span className="bg-red-400 text-white text-xs px-2 py-1 rounded">Music</span>
+                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
+                  </div>
                 </div>
               ))}
             </SidebarGroupContent>
