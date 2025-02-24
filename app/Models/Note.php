@@ -84,7 +84,7 @@ class Note
         return $disk->files(Auth::id() . "/notes");
     }
 
-    public static function getById(int $id)
+    public static function getById(int $id, ?string $disk_root = null)
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to retrieve a note.");
@@ -111,7 +111,12 @@ class Note
             throw $err;
         }
 
-        return static::asObjectArray($res);
+        $disk = StorageHelpers::getS3Disk($disk_root);
+
+        $obj = static::asObjectArray($res)[0];
+        $obj->content = $disk->get(Auth::id() . "/notes/" . $obj->name . "_" . $obj->id);
+
+        return $obj;
     }
 
 
