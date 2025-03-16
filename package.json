@@ -45,6 +45,7 @@
         "lucide-react": "^0.471.2",
         "react-type-animation": "^3.2.0",
         "react-typed": "^2.0.12",
+        "remark-directive": "^4.0.0",
         "tailwind-merge": "^2.6.0",
         "tailwindcss-animate": "^1.0.7",
         "typed.js": "^2.1.0",
