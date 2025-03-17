@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\NoteController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Middleware\AddApiToken;
+use App\Http\Middleware\AddAuthStatus;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(function () {
     Route::prefix('notes')->group(function () {
         Route::get('/', [NoteController::class, 'index'])->name('index');
         Route::get('/{note_id}', [NoteController::class, 'get'])->name('get');
