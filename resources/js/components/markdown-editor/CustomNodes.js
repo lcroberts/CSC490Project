@@ -22,7 +22,7 @@ const audioNode = $node("audio", () => ({
     },
   ],
   toDOM: (node) => {
-    return ["audio", { ...node.attrs, contenteditable: false }, 0];
+    return ["audio", { ...node.attrs, controls: true }, 0];
   },
   parseMarkdown: {
     match: (node) => node.type === "leafDirective" && node.name === "audio",
