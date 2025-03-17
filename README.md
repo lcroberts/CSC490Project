@@ -8,7 +8,7 @@ When developing please branch off of dev. You can checkout dev with `git checkou
 
 After cloning the repo the first thing you will want to do it copy `.env.example` to `.env`, you shouldn't have to do anything more with that for now.
 
-There is a [docker compose](https://docs.docker.com/compose/) file that will automatically set up a [postgres](https://www.postgresql.org/) database using the credentials in the `.env` file. After [installing docker](https://docs.docker.com/get-started/) run `docker compose up -d` in the repos base directory. All docker data is stored in the docker directory.
+There is a [docker compose](https://docs.docker.com/compose/) file that will automatically set up a [postgres](https://www.postgresql.org/) database using the credentials in the `.env` file. After [installing docker](https://docs.docker.com/get-started/) run `docker compose up -d` in the repos base directory. All docker data is stored in a volume called `postgres-data`. You can view docker volumes with `docker volume ls` and remove docker volumes with `docker volume rm volume-name-here`.
 
 You will then need to decide how you are going to decide how to get php set up for running the project. [Laravel provides an install script](https://laravel.com/docs/11.x#installing-php) which should handle most things for you. For a more automatic experience on Windows or MacOS there is also [Laravel Herd](https://herd.laravel.com/). I have never used Herd so I do not have any instructions for setting it up so the following instructions will be for interacting with Laravel through the command line.
 
