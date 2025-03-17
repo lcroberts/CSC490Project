@@ -10,6 +10,21 @@ export default function EditorStateProvider({ children }) {
 
   val.notes = [
     {
+      title: "Media Embed Demo",
+      createdAt: "14:30",
+      content: `This is a sample note to showcase media embedding
+![here is cat audio](cat.mp3)
+
+![here is cat image](cat.jpg)
+
+![here is cat video](cat.mp4)`,
+    },
+    {
+      title: "Grades",
+      createdAt: "02/16/2025",
+      content: `Overall, I'm doing pretty well in most of my classes, but there are a few areas I need to focus on. In Math, I have a B+, which is solid, but I really want to push for an A by the end of the semester. I’ve been doing okay in English with an A-, but I think I could do better on my essays if I put in more effort. My History grade is a C, which I’m not happy with, so I plan to meet with the teacher for extra help and work on my study habits. Science is going well with a B, but I know I can raise it if I focus more during labs and quizzes. Overall, I just need to keep on top of my assignments and review more before tests. I’m determined to finish strong!`,
+    },
+    {
       title: "Fishing spots in North Carolina",
       createdAt: "10:30",
       content: `Freshwater Fishing:

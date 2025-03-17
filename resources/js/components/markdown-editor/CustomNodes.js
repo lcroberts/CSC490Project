@@ -1,4 +1,4 @@
-import { $node, $remark, $inputRule } from "@milkdown/kit/utils";
+import { $node, $remark } from "@milkdown/kit/utils";
 import directive from "remark-directive";
 
 const remarkDirective = $remark("remark-dirctive", () => directive);
@@ -62,7 +62,7 @@ const videoNode = $node("video", () => ({
     },
   ],
   toDOM: (node) => {
-    return ["video", { ...node.attrs, contenteditable: false }, 0];
+    return ["video", { ...node.attrs, controls: true }, 0];
   },
   parseMarkdown: {
     match: (node) => node.type === "leafDirective" && node.name === "video",
