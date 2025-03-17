@@ -314,3 +314,18 @@ export function isAudio(extensionOrMimeType) {
       return false;
   }
 }
+
+/**
+ * Takes a file name or url to a file and breaks off the extension
+ * @param {string} nameOrUrl
+ * @returns {{base: string, extension: string}}
+ */
+export function splitToBaseAndExtension(nameOrUrl) {
+  const parts = nameOrUrl.split(".");
+  const extension = parts.pop();
+  const name = parts.join(".");
+  return {
+    base: name,
+    extension: extension,
+  };
+}

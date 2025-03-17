@@ -25,7 +25,13 @@ const audioNode = $node("audio", () => ({
     return ["audio", { ...node.attrs, controls: true }, 0];
   },
   parseMarkdown: {
-    match: (node) => node.type === "leafDirective" && node.name === "audio",
+    match: (node) => {
+      if (node.type === "image-block") {
+        return node.name === "audio";
+      } else {
+        return false;
+      }
+    },
     runner: (state, node, type) => {
       state.addNode(type, { src: node.attributes.src });
     },
@@ -65,7 +71,9 @@ const videoNode = $node("video", () => ({
     return ["video", { ...node.attrs, controls: true }, 0];
   },
   parseMarkdown: {
-    match: (node) => node.type === "leafDirective" && node.name === "video",
+    match: (node) => {
+      return node.type === "leafDirective" && node.name === "video";
+    },
     runner: (state, node, type) => {
       state.addNode(type, { src: node.attributes.src });
     },
