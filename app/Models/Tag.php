@@ -18,8 +18,10 @@ class Tag
     /**
      * @throws UnexpectedValueException if API prompts fail.
      */
-    public static function generateAndSave(/* Note $note */ string $note_content): array
+    public static function generateAndSave(int $note_id): array
     {
+        $note = Note::getById($note_id);
+
         $response = OpenAIHelpers::submitCompletion(
             "You will be provided with a document delimited by three brackets. \
                 Your task is to select excerpts representative of the core ideas of the text. \
@@ -31,7 +33,7 @@ class Tag
                 [{'excerpt': '...'},\n \
                 ...\n \
                 {'excerpt': '...'}]",
-            "{{{" . $note_content . "}}}"
+            "{{{" . $note->content . "}}}"
         );
 
         // Guard this against error return value later
@@ -63,25 +65,21 @@ class Tag
         $tags = explode(",", $json->choices[0]->message->content);
         $indices = [];
         foreach ($tags as $content) {
-            $indices[] = self::save($content);
+            $indices[] = self::save($note_id, $content);
         }
 
         return $indices;
     }
 
-    private static function save(/* Note $note, */ string $content): int
+    private static function save(int $note_id, string $content): int
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save tags.");
 
         $existing_tags = self::getByContent($content);
         if (!empty($existing_tags)) {
-            // insert_into_notes_to_tags(note, tag)
+            return -1;
         }
-
-        //  submitCompletion("If tags similar, combine and return text");
-        //
-        //  decodeIntoArray(text)
 
         $params = [
             'content' => $content,
@@ -103,14 +101,30 @@ class Tag
             throw $err;
         }
 
-        // insert_into_note_to_tag(note, tag)
+        $params = [
+            'note_id' => $note_id,
+            'tag_id' => $id,
+        ];
+
+        $sql = "
+            INSERT INTO notes_to_tags (tag, note)
+            VALUES (:tag_id, :note_id);
+        ";
+
+        try {
+            DB::insert($sql, $params);
+        } catch (QueryException $err) {
+            $msg = __METHOD__ . ': ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
+            Log::error($msg);
+
+            throw $err;
+        }
 
         return $id;
     }
 
     public static function getPageOfTags(int $limit, int $last_id = null)
     {
-        // TODO: add retrieve by note when we actually have notes model
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to retrieve tags.");
         
@@ -171,12 +185,17 @@ class Tag
         return $res;
     }
 
-    public static function index(): array
+    public static function index(int $note): array
     {
-        $sql = "SELECT * FROM tags;";
+        $params['note_id'] = $note;
+
+        $sql = "SELECT * FROM tags
+                INNER JOIN notes_to_tags ON notes_to_tags.tag = tags.id
+                WHERE notes_to_tags.note = :note_id;
+        ";
 
         try {
-            $res = DB::select($sql, []);
+            $res = DB::select($sql, $params);
             if (empty($res)) {
                 $res = [];
             }

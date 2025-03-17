@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('note')->unsigned()->index();
 
             $table->foreign('tag')->references('id')->on('tags')->onDelete('cascade');
-        //  $table->foreign('note')->references('id')->on('notes')->onDelete('cascade');
+            $table->foreign('note')->references('id')->on('notes')->onDelete('cascade');
         });
     }
 
