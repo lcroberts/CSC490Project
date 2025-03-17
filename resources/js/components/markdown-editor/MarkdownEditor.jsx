@@ -5,10 +5,8 @@ import "@milkdown/crepe/theme/frame.css";
 import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
 // import MarkdownLogPlugin from './MarkdownLogPlugin';
-import HandleLinkPlugin from './AutoInsertImage';
-import { audioDirective } from './AudioNode';
-import { audioInputRule } from './AudioNode';
-import { audioNode } from './AudioNode';
+import InlineMediaInputRule from './InlineMediaInputRule';
+import {remarkDirective, audioNode, videoNode} from './CustomNodes.js';
 
 const MilkdownEditor = ({defaultContent}) => {
   // `get` returns the editor info
@@ -19,10 +17,10 @@ const MilkdownEditor = ({defaultContent}) => {
     });
     crepe.editor.use([
       DisableAutoEscapeBrackets,
-      HandleLinkPlugin,
-      ...audioDirective,
+      InlineMediaInputRule,
+      ...remarkDirective,
       audioNode,
-      audioInputRule,
+      videoNode,
     ]);
     // crepe.editor.use(MarkdownLogPlugin);
     return crepe;
