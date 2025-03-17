@@ -69,30 +69,36 @@ class OpenAIHelpers
      *
      */
 
-    public static function submitTrancription(string $system, string $user, string $audio)
+    public static function submitWhisper(string $endpoint, string $content)
     {
-        $system = json_encode([
-            'role' => 'system',
-            'content' => $system,
-        ]);
-        $user = json_encode([array(
-            'role' => 'user',
-            'content' => array(
-                array('type' => 'text', 'text' => $user),
-                array('type' => 'input_audio',
-                    'input_audio' => array('data' => $audio, 'format' => 'mp3')),
-            ))
-        ]);
+        $client = curl_init();
 
+        $headers = [
+            'Content-Type: multipart/form-data',
+            'Authorization: Bearer ' . env('OPENAI_KEY'),
+        ];
+
+        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/" . $endpoint);
+        curl_setopt($client, CURLOPT_POST, 1);
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($client, CURLOPT_POSTFIELDS, $content);
+        curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($client);
+        curl_close($client);
+
+        return $result;
+
+    }
+
+    public static function submitTrancription($audio)
+    {
         $content = json_encode(array(
-            'model' => 'gpt-40-audio-preview',
-            'messages' => array(
-                array('role' => 'system', 'content' => $system),
-                array('role' => 'user', 'content' => $user),
-            ),
+            'file' => $audio,
+            'model' => 'whisper-1',
         ));
 
-        $result = OpenAIHelpers::submitAny("chat/completions", $content);
+        $result = OpenAIHelpers::submitWhisper("audio/transcriptions", $content);
         return $result;
 
     }
