@@ -71,9 +71,11 @@ class OpenAIHelpers
             'role' => 'user',
             'content' => array(
                 array('type' => 'text', 'text' => $user),
-                array('type' => 'image_url', 'image_url' => array('url' => $image)),
+                array('type' => 'image_url', 'image_url' => array('url' => "data:image/jpeg;base64,{$image}")),
             ),
         ]);
+
+        print_r($user);
 
         $content = json_encode(array(
             'model' => env('OPENAI_MODEL'),

@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\ImageDescription;
+use App\Helpers\OpenAIHelpers;
 use Illuminate\Console\Command;
 use UnexpectedValueException;
 
@@ -27,14 +28,14 @@ class TestImageDescription extends Command
      */
     public function handle()
     {
-        $image = "https://www.wiley.com/storefront-pdp-assets/_next/image?url=https%3A%2F%2Fmedia.wiley.com%2Fproduct_data%2FcoverImage300%2F66%2F11198003%2F1119800366.jpg&w=640&q=75";
-    // Image provided by Logan via Discord.
+        $image = "C:\Users\unclu\Downloads\Dog Ear Picket.JPG";
+    // Image sourced from myself.
 
-       /* if (!file_exists($image)) {
-        throw new UnexpectedValueException("Image file does not exist at provided path.");
-        } */
+        if (!file_exists($image)) {
+            throw new UnexpectedValueException("Image file does not exist at provided path.");
+        }
 
-        $image_description = ImageDescription::generateImageDescription($image, /*true*/);
+        $image_description = ImageDescription::generateImageDescription($image);
 
         echo $image_description . "\n";
     }
