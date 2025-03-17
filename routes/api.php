@@ -1,10 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\NoteController;
+use App\Http\Controllers\SummaryController;
+use App\Http\Middleware\AddApiToken;
+use App\Http\Middleware\AddAuthStatus;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum'])->name('api.')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    })->name('user');
+Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(function () {
+    Route::prefix('notes')->group(function () {
+        Route::get('/', [NoteController::class, 'index'])->name('index');
+        Route::get('/{note_id}', [NoteController::class, 'get'])->name('get');
+        Route::delete('/{note_id}/delete', [NoteController::class, 'delete'])->name('delete');
+
+        Route::post('/create', [NoteController::class, 'store'])->name('create');
+        Route::put('/save', [NoteController::class, 'alter'])->name('save');
+    });
+    Route::prefix('media')->group(function() {
+        Route::get('/{note_id}', [NoteController::class, 'indexMedia'])->name('index');
+        Route::get('/{note_id}/{name}', [NoteController::class, 'getMedia'])->name('get');
+        Route::delete('/{note_id}/{name}/delete', [NoteController::class, 'deleteMedia'])->name('delete');
+
+        Route::post('/create', [NoteController::class, 'addMedia'])->name('add');
+    });
+    Route::prefix('summary')->group(function() {
+        Route::post('/create', [SummaryController::class, 'generate'])->name('generate');
+    });
 });
