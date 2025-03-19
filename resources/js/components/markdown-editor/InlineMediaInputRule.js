@@ -6,15 +6,14 @@ import { isAudio, isImage, isVideo, splitToBaseAndExtension } from "@/lib/utils"
 const InlineMediaInputRule = $inputRule(
   (ctx) =>
     // Regex matches links
-    new InputRule(/(!?)\[(.*?)\]\((.*?)\)/, (state, match, start, end) => {
+    new InputRule(/!\[(.*?)\]\((.*?)\)/, (state, match, start, end) => {
       console.log("running");
       const { tr } = state;
       if (match[1] !== "!") {
         // regular link
         return tr;
       }
-      const parts = match[3].split(".");
-      const {base, extension} = splitToBaseAndExtension(match[3]);
+      const {base, extension} = splitToBaseAndExtension(match[2]);
       // if (!extension) {
       //   // no file extension so regular link
       //   // TODO: FIX THIS IF STATEMENT

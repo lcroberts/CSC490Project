@@ -1,7 +1,6 @@
 import { $node, $remark } from "@milkdown/kit/utils";
 import directive from "remark-directive";
 
-const remarkDirective = $remark("remark-dirctive", () => directive);
 const audioNode = $node("audio", () => ({
   group: "block",
   atom: true,
@@ -90,4 +89,4 @@ const videoNode = $node("video", () => ({
   },
 }));
 
-export { remarkDirective, audioNode, videoNode };
+export { audioNode, videoNode };
