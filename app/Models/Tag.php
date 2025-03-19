@@ -4,8 +4,10 @@ namespace App\Models;
 
 use App\Helpers\OpenAIHelpers;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\UnauthorizedException;
 use UnexpectedValueException;
 
 class Tag
@@ -16,8 +18,10 @@ class Tag
     /**
      * @throws UnexpectedValueException if API prompts fail.
      */
-    public static function generateAndSave(/* Note $note */ string $note_content): array
+    public static function generateAndSave(int $note_id): array
     {
+        $note = Note::getById($note_id);
+
         $response = OpenAIHelpers::submitCompletion(
             "You will be provided with a document delimited by three brackets. \
                 Your task is to select excerpts representative of the core ideas of the text. \
@@ -29,7 +33,7 @@ class Tag
                 [{'excerpt': '...'},\n \
                 ...\n \
                 {'excerpt': '...'}]",
-            "{{{" . $note_content . "}}}"
+            "{{{" . $note->content . "}}}"
         );
 
         // Guard this against error return value later
@@ -61,28 +65,30 @@ class Tag
         $tags = explode(",", $json->choices[0]->message->content);
         $indices = [];
         foreach ($tags as $content) {
-            $indices[] = self::save($content);
+            $indices[] = self::save($note_id, $content);
         }
 
         return $indices;
     }
 
-    private static function save(/* Note $note, */ string $content): int
+    private static function save(int $note_id, string $content): int
     {
+        if (!Auth::check())
+            throw new UnauthorizedException("User must be authenticated to save tags.");
+
         $existing_tags = self::getByContent($content);
         if (!empty($existing_tags)) {
-            // insert_into_notes_to_tags(note, tag)
+            return -1;
         }
 
-        //  submitCompletion("If tags similar, combine and return text");
-        //
-        //  decodeIntoArray(text)
-
-        $params = ['content' => $content];
+        $params = [
+            'content' => $content,
+            'user_id' => Auth::id(),
+        ];
 
         $sql = "
-            INSERT INTO tags (created_at, content)
-            VALUES (timezone('utc', now()), :content);
+            INSERT INTO tags (created_at, user_id, content)
+            VALUES (timezone('utc', now()), :user_id, :content);
         ";
 
         try {
@@ -90,14 +96,78 @@ class Tag
             $id = DB::getPdo()->lastInsertId();
         } catch (QueryException $err) {
             $msg = __METHOD__ . ': ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
-            Log::err($msg);
+            Log::error($msg);
 
             throw $err;
         }
 
-        // insert_into_note_to_tag(note, tag)
+        $params = [
+            'note_id' => $note_id,
+            'tag_id' => $id,
+        ];
+
+        $sql = "
+            INSERT INTO notes_to_tags (tag, note)
+            VALUES (:tag_id, :note_id);
+        ";
+
+        try {
+            DB::insert($sql, $params);
+        } catch (QueryException $err) {
+            $msg = __METHOD__ . ': ' . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
+            Log::error($msg);
+
+            throw $err;
+        }
 
         return $id;
+    }
+
+    public static function getPageOfTags(int $limit, int $last_id = null)
+    {
+        if (!Auth::check())
+            throw new UnauthorizedException("User must be authenticated to retrieve tags.");
+        
+        $params = [
+            'limit' => $limit,
+            'user_id' => Auth::id(),
+        ];
+
+        $sql = "";
+
+        if (is_null($last_id))
+        {
+            $sql .= "
+                SELECT * FROM tags
+                WHERE user_id = :user_id
+                LIMIT :limit;
+            ";
+        }
+        else
+        {
+            $params['last_id'] = $last_id;
+            // Figure out way to rewrite to use index later
+            $sql .= "
+                SELECT * FROM tags
+                WHERE user_id = :user_id
+                    AND id > :last_id
+                LIMIT :limit;
+            ";
+        }
+
+        try {
+            $res = DB::select($sql, $params);
+            if (empty($res)) {
+                $res = [];
+            }
+        } catch (QueryException $err) {
+            $msg = __METHOD__ . ": " . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
+            Log::error($msg);
+
+            throw $err;
+        }
+
+        return static::asObjectArray($res);
     }
 
     private static function asObjectArray(array &$results): array
@@ -115,12 +185,17 @@ class Tag
         return $res;
     }
 
-    public static function index(): array
+    public static function index(int $note): array
     {
-        $sql = "SELECT * FROM tags;";
+        $params['note_id'] = $note;
+
+        $sql = "SELECT * FROM tags
+                INNER JOIN notes_to_tags ON notes_to_tags.tag = tags.id
+                WHERE notes_to_tags.note = :note_id;
+        ";
 
         try {
-            $res = DB::select($sql, []);
+            $res = DB::select($sql, $params);
             if (empty($res)) {
                 $res = [];
             }
