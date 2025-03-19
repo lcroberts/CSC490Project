@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImageDescriptionController;
 use App\Http\Controllers\NoteController;
 use App\Http\Middleware\AddApiToken;
 use App\Http\Middleware\AddAuthStatus;
@@ -20,5 +21,8 @@ Route::middleware(['auth', AddApiToken::class, AddAuthStatus::class])->group(fun
         Route::delete('/{note_id}/{name}/delete', [NoteController::class, 'deleteMedia'])->name('delete');
 
         Route::post('/create', [NoteController::class, 'addMedia'])->name('add');
+    });
+    Route::prefix('description')->group(function() {
+       Route::post('/send', [ImageDescriptionController::class, 'sendImage'])->name('send');
     });
 });

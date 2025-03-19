@@ -28,7 +28,7 @@ class TestImageDescription extends Command
      */
     public function handle()
     {
-        $image = "C:\Users\unclu\Downloads\Dog Ear Picket.JPG";
+        $image = "Inserttestimagehere.jpg";
     // Image sourced from myself.
 
         if (!file_exists($image)) {

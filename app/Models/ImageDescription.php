@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\OpenAIHelpers;
-use DataInterval;
+use DateInterval;
 use Illuminate\Support\Facades\Cache;
 use UnexpectedValueException;
 use function Webmozart\Assert\Tests\StaticAnalysis\string;
@@ -34,12 +34,9 @@ class ImageDescription
             throw new UnexpectedValueException("Empty JSON object was returned from API while generating excerpts.");
         }
 
-        print_r($json);
-
         $description = $json->choices[0]->message->content;
 
-
-        $duration = new DataInterval('P1W');
+        $duration = new DateInterval('P1W');
         Cache::add($hash, $description, $duration);
 
 
