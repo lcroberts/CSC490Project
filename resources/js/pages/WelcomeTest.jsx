@@ -1,12 +1,12 @@
-import Navbar from '@/components/Navbar'
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { TypeAnimation } from 'react-type-animation'
+import Navbar from '@/components/Navbar';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { TypeAnimation } from 'react-type-animation';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card"
+} from "@/components/ui/hover-card";
 
 export default function TestWelcome() {
   return (
@@ -19,10 +19,18 @@ export default function TestWelcome() {
       </div>
       <Separator orientation="vertical" className="absolute top-0 left-[200px] h-full" />
       <Separator orientation="vertical" className="absolute top-0 right-[180px] h-full" />
-      
+
       <div className="absolute top-0 right-0 flex items-center p-5">
-        <Button variant="primary">Signup</Button>
-        <Button variant="outline">Login</Button>
+        <Button variant="primary">
+          <a href="/login?register=true">
+            Signup
+          </a>
+        </Button>
+        <Button variant="outline" className="bg-orange-400 text-white">
+          <a href="/login?register=false">
+            Login
+          </a>
+        </Button>
       </div>
       <div className="flex flex-grow items-center justify-center p-5">
         <Navbar />
@@ -31,13 +39,13 @@ export default function TestWelcome() {
 
       <div className="flex flex-col items-center justify-center pb-8 h-screen">
         <h1 className="text-9xl font-bold mb-4">
-        Ideas made  
+          Ideas made
           <span className="gradient-text">{' '}
             <TypeAnimation
               sequence={[
-                'easy', 
-                2000, 
-                'fun', 
+                'easy',
+                2000,
+                'fun',
                 2000,
                 'secure',
                 2000,
@@ -65,14 +73,17 @@ export default function TestWelcome() {
           </span>
         </h1>
         <p className="text-3xl mb-8">StudyBuddy is the ultimate tool for organizing and accessing your study notes.</p>
-        <Button className="bg-orange-400 text-white hover:bg-red-400 text-lg" size="lg">Get Started</Button>
+        <Button className="bg-orange-400 text-white hover:bg-red-400 hover:shadow-lg hover:shadow-red-400/50 text-lg hover-animate-glow" size="lg">
+        <a href="/login?register=true">
+          Get Started
+          </a></Button>
       </div>
 
       <div id="markdown-editor" className="flex flex-col items-center text-7xl font-bold mb-4">
         <h1>Markdown Editor</h1>
         <Separator orientation="horizontal" className="w-full" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          We utilize 
+          We utilize
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Milkdown</Button>
@@ -97,7 +108,7 @@ export default function TestWelcome() {
         <h1>Encryption</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          We provide 
+          We provide
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Encryption</Button>
@@ -118,7 +129,7 @@ export default function TestWelcome() {
         <h1>Summarization</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          StudyBuddy offers a 
+          StudyBuddy offers a
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Summarization</Button>
@@ -139,7 +150,7 @@ export default function TestWelcome() {
         <h1>Tagging</h1>
         <Separator orientation="horizontal" className="w-full mt-3" />
         <h2 className="text-3xl font-bold mb-4 pt-4">
-          Users have the option to use our  
+          Users have the option to use our
           <HoverCard>
             <HoverCardTrigger asChild>
               <Button variant="link" className="text-orange-400 cursor-pointer text-3xl">Tagging</Button>
@@ -161,19 +172,19 @@ export default function TestWelcome() {
         <Separator orientation="horizontal" className="w-full mb-2" />
         <div className="grid grid-cols-1 gap-1.5">
           <a href="#markdown-editor">
-            <Button variant="outline">Markdown Editor</Button>
+            <Button variant="outline" className="w-full">Markdown Editor</Button>
           </a>
           <a href="#encryption">
-            <Button variant="outline">Encryption</Button>
+            <Button variant="outline" className="w-full">Encryption</Button>
           </a>
           <a href="#summarization">
-          <Button variant="outline">Summarization</Button>
+            <Button variant="outline" className="w-full">Summarization</Button>
           </a>
           <a href="#tagging">
-          <Button variant="outline">Tagging</Button>
+            <Button variant="outline" className="w-full">Tagging</Button>
           </a>
           <a href="#note-linking">
-          <Button variant="outline">Note-Linking</Button>
+            <Button variant="outline" className="w-full">Note-Linking</Button>
           </a>
         </div>
       </div>
