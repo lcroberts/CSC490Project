@@ -13,6 +13,7 @@ export default function EditorStateProvider({ children }) {
       title: "Media Embed Demo",
       createdAt: "14:30",
       content: `This is a sample note to showcase media embedding
+
 ![here is cat audio](cat.mp3)
 
 ![here is cat image](cat.jpg)

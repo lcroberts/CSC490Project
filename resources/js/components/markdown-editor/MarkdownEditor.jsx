@@ -4,11 +4,12 @@ import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
-// import MarkdownLogPlugin from './MarkdownLogPlugin';
+import MarkdownLogPlugin from './MarkdownLogPlugin';
 import InlineMediaInputRule from './InlineMediaInputRule';
-import { audioNode, videoNode} from './CustomNodes.js';
+import { audioNode, customImageNode, videoNode } from './CustomNodes.js';
+import { listener } from '@milkdown/kit/plugin/listener';
 
-const MilkdownEditor = ({defaultContent}) => {
+const MilkdownEditor = ({ defaultContent }) => {
   // `get` returns the editor info
   const { get } = useEditor((root) => {
     const crepe = new Crepe({
@@ -20,15 +21,16 @@ const MilkdownEditor = ({defaultContent}) => {
       InlineMediaInputRule,
       audioNode,
       videoNode,
+      customImageNode,
     ]);
-    // crepe.editor.use(MarkdownLogPlugin);
+    crepe.editor.use([listener, MarkdownLogPlugin]);
     return crepe;
   });
 
   return <Milkdown />;
 };
 
-export const MarkdownEditor = ({defaultContent}) => {
+export const MarkdownEditor = ({ defaultContent }) => {
   return (
     <MilkdownProvider>
       <MilkdownEditor defaultContent={defaultContent} />
