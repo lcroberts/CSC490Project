@@ -23,7 +23,7 @@ const MilkdownEditor = ({ defaultContent }) => {
       videoNode,
       customImageNode,
     ]);
-    crepe.editor.use([listener, MarkdownLogPlugin]);
+    // crepe.editor.use([listener, MarkdownLogPlugin]);
     return crepe;
   });
 
