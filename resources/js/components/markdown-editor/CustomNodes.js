@@ -50,7 +50,7 @@ const audioNode = $node("audio", () => ({
     match: (node) => node.type.name === "audio",
     runner: (state, node) => {
       state.openNode("paragraph");
-      state.addNode("image", void 0, void 0, {
+      state.addNode("image", undefined, undefined, {
         url: node.attrs.src,
         alt: node.attrs.alt,
       });
@@ -103,7 +103,7 @@ const videoNode = $node("video", () => ({
     match: (node) => node.type.name === "video",
     runner: (state, node) => {
       state.openNode("paragraph");
-      state.addNode("image", void 0, void 0, {
+      state.addNode("image", undefined, undefined, {
         url: node.attrs.src,
         alt: node.attrs.alt,
       });
@@ -152,7 +152,7 @@ const customImageNode = $node("custom-image", () => ({
     match: (node) => node.type.name === "custom-image",
     runner: (state, node) => {
       state.openNode("paragraph");
-      state.addNode("image", void 0, void 0, {
+      state.addNode("image", undefined, undefined, {
         url: node.attrs.src,
         alt: node.attrs.alt,
       });

@@ -1,7 +1,12 @@
 import { InputRule } from "@milkdown/prose/inputrules";
 import { $inputRule } from "@milkdown/utils";
-import { audioNode, videoNode } from "./CustomNodes";
-import { isAudio, isImage, isVideo, splitToBaseAndExtension } from "@/lib/utils";
+import { audioNode, customImageNode, videoNode } from "./CustomNodes";
+import {
+  isAudio,
+  isImage,
+  isVideo,
+  splitToBaseAndExtension,
+} from "@/lib/utils";
 
 const InlineMediaInputRule = $inputRule(
   (ctx) =>
@@ -10,24 +15,30 @@ const InlineMediaInputRule = $inputRule(
       const { tr } = state;
       if (match[1] !== "!") {
         // regular link
+        tr.addMark(start - 1, end, "link");
         return tr;
       }
-      const {base, extension} = splitToBaseAndExtension(match[3]);
-      console.log(base, extension);
-      // if (!extension) {
-      //   // no file extension so regular link
-      //   // TODO: FIX THIS IF STATEMENT
-      //   return tr;
-      // }
-      console.log(base, extension);
+      const { base, extension } = splitToBaseAndExtension(match[3]);
 
-      if (isImage(extension)) {
-      } else if (isVideo(extension)) {
-        tr.replaceWith(start - 1, end, videoNode.type(ctx).create({ src: base + "." + extension }));
+      if (isVideo(extension)) {
+        tr.replaceWith(
+          start - 1,
+          end,
+          videoNode.type(ctx).create({ src: match[3], alt: match[2] }),
+        );
       } else if (isAudio(extension)) {
-        tr.replaceWith(start - 1, end, audioNode.type(ctx).create({ src: base + "." + extension }));
+        tr.replaceWith(
+          start - 1,
+          end,
+          audioNode.type(ctx).create({ src: match[3], alt: match[2] }),
+        );
       } else {
-        // Normal link
+        // Image
+        tr.replaceWith(
+          start - 1,
+          end,
+          customImageNode.type(ctx).create({ src: match[3], alt: match[2] }),
+        );
       }
       return tr;
     }),
