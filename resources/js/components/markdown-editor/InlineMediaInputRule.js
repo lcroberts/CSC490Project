@@ -15,7 +15,11 @@ const InlineMediaInputRule = $inputRule(
       const { tr } = state;
       if (match[1] !== "!") {
         // regular link
-        tr.addMark(start - 1, end, "link");
+        tr.replaceWith(start - 1, end, state.schema.text(match[2]));
+        tr.addMark(start - 1, start + match[2].length, state.schema.marks.link.create({
+          title: match[2],
+          href: match[3],
+        }));
         return tr;
       }
       const { base, extension } = splitToBaseAndExtension(match[3]);
