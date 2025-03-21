@@ -78,11 +78,11 @@
 
 .scrollbar {
   overflow: scroll;
-  scrollbar-width: none; 
+  scrollbar-width: none;
 }
 
 .scrollbar::-webkit-scrollbar {
-  display: none; 
+  display: none;
 }
 
 .hover-animate-glow {
@@ -113,3 +113,6 @@
   box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Adjust the color and intensity as needed */
 }
 
+.milkdown milkdown-block-handle > :nth-child(2) {
+    display: none !important;
+}
