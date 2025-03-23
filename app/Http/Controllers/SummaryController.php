@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class SummaryController extends Controller
 {
-    public function generate(Request $request)
+    public function sendText(Request $request)
     {
         $noteContent = $request->input('noteContent');
         $forceGeneration = $request->input('forceGeneration', false);
