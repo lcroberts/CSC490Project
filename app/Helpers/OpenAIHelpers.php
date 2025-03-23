@@ -71,7 +71,7 @@ class OpenAIHelpers
             'role' => 'user',
             'content' => array(
                 array('type' => 'text', 'text' => $user),
-                array('type' => 'image_url', 'image_url' => array('url' => "data:image/jpeg;base64,{$image}")),
+                array('type' => 'image_url', 'image_url' => array('url' => "data:image/webp;base64,{$image}")),
             ),
         ]);
 
