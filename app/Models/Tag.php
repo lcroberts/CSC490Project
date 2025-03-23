@@ -13,6 +13,7 @@ use UnexpectedValueException;
 class Tag
 {
     public int $id;
+    public int $user_id;
     public string $content;
 
     /**
@@ -247,5 +248,25 @@ class Tag
         }
 
         return static::asObjectArray($res);
+    }
+
+    public static function deleteById(int $id)
+    {
+        $obj = Tag::getById($id)[0];
+
+        if (Auth::id() != $obj->user_id)
+            throw new UnauthorizedException("User must be authenticated to delete tag.");
+        
+        $params = ['id' => $id];
+        $sql = "SELECT * FROM tags WHERE id = :id;";
+
+        try {
+            DB::delete($sql, $params);
+        } catch (QueryException $err) {
+            $msg = __METHOD__ . ": " . $err->getMessage() . PHP_EOL . $err->getTraceAsString();
+            Log::error($msg);
+
+            throw $err;
+        }
     }
 }
