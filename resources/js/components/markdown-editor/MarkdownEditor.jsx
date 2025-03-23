@@ -7,14 +7,19 @@ import "@milkdown/crepe/theme/frame.css";
 import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
 import InlineMediaInputRule from './InlineMediaInputRule';
-import { audioNode, customImageNode, videoNode } from './CustomNodes.js';
+import { audioNode, customImageNode, mediaInputRule, mediaNode, remarkDirective, videoNode } from './CustomNodes.js';
 import { upload, uploadConfig } from '@milkdown/kit/plugin/upload';
 import { customUploader } from './UploadPlugin';
-import { ProsemirrorAdapterProvider, usePluginViewFactory } from '@prosemirror-adapter/react';
+import { ProsemirrorAdapterProvider, usePluginViewFactory, useNodeViewFactory } from '@prosemirror-adapter/react';
 import { slash, SlashView } from './Slash';
+import { $view } from '@milkdown/kit/utils';
+import MediaUploadButton from './MediaUploadButton';
 
 const MilkdownEditor = ({ defaultContent }) => {
   const pluginViewFactory = usePluginViewFactory();
+  const nodeViewFactory = useNodeViewFactory();
+
+
   const { get } = useEditor((root) => {
     const crepe = new Crepe({
       root: root,
@@ -31,7 +36,14 @@ const MilkdownEditor = ({ defaultContent }) => {
       customImageNode,
       upload,
       slash,
+      remarkDirective,
+      mediaNode,
+      mediaInputRule,
     ]);
+
+    crepe.editor.use($view(mediaNode, () => nodeViewFactory({
+      component: MediaUploadButton,
+    })))
 
     crepe.editor.config((ctx) => {
       ctx.update(uploadConfig.key, (prev) => ({
