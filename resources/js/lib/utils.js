@@ -135,3 +135,197 @@ export async function decryptData(string, key) {
   );
   return plaintext;
 }
+
+/**
+ * Takes a file extension or mime type and returns whether or not it is an image
+ * @param {string} extensionOrMimeType file extension or mime type
+ * @returns {boolean}
+ */
+export function isImage(extensionOrMimeType) {
+  if (extensionOrMimeType.charAt(0) === ".") {
+    extensionOrMimeType = extensionOrMimeType.slice(1);
+  }
+  switch (extensionOrMimeType.toLowerCase()) {
+    // File extensions
+    case "jpeg":
+    case "jpg":
+    case "png":
+    case "gif":
+    case "bmp":
+    case "webp":
+    case "tiff":
+    case "svg":
+    case "ico":
+    case "avif":
+    case "heif":
+    case "heic":
+    case "raw":
+    case "nef":
+    case "cr2":
+    case "dng":
+    case "arw":
+    case "orf":
+    case "sr2":
+    case "pef":
+    case "raf":
+    case "rw2":
+    case "psd":
+    case "indd":
+    case "eps":
+    case "ai":
+    case "xcf":
+    case "pcx":
+    case "tga":
+    case "exr":
+    case "sgi":
+    case "hdr":
+    case "ico":
+    case "svgz":
+    // MIME types
+    case "image/jpeg":
+    case "image/jpg":
+    case "image/png":
+    case "image/gif":
+    case "image/bmp":
+    case "image/webp":
+    case "image/tiff":
+    case "image/svg+xml":
+    case "image/vnd.microsoft.icon":
+    case "image/heif":
+    case "image/heic":
+    case "image/x-adobe-dng":
+    case "image/x-canon-cr2":
+    case "image/x-raw":
+    case "image/x-nikon-nef":
+    case "image/x-sony-arw":
+    case "image/x-olympus-orf":
+    case "image/x-raw":
+    case "image/x-panasonic-rw2":
+    case "image/vnd.adobe.photoshop":
+    case "image/vnd.adobe.indesign":
+    case "image/vnd.adobe.eps":
+    case "image/vnd.adobe.ai":
+    case "image/x-gimp-xcf":
+    case "image/x-pcx":
+    case "image/x-tga":
+    case "image/x-exr":
+    case "image/x-sgi":
+    case "image/x-hdr":
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Takes a file extension or mime type and returns whether or not it is a video
+ * @param {string} extensionOrMimeType file extension or mime type
+ * @returns {boolean}
+ */
+export function isVideo(extensionOrMimeType) {
+  if (extensionOrMimeType.charAt(0) === ".") {
+    extensionOrMimeType = extensionOrMimeType.slice(1);
+  }
+  switch (extensionOrMimeType.toLowerCase()) {
+    // Video file extensions
+    case "mp4":
+    case "mkv":
+    case "webm":
+    case "avi":
+    case "mov":
+    case "flv":
+    case "wmv":
+    case "mpeg":
+    case "mpg":
+    case "3gp":
+    case "ogv":
+    case "ts": // Transport Stream
+    case "m4v": // Common extension for MP4 video
+    case "rm": // RealMedia video files
+    case "rmvb": // RealMedia variable bitrate video files
+    case "divx": // DivX video format
+    case "xvid": // Xvid video format
+    case "svi": // Samsung Video Interface (used by some mobile devices)
+    case "iso": // Disc image that may contain videos (e.g., DVD images)
+    case "vob": // Video Object (used in DVDs)
+    // Video mime types
+    case "video/mp4":
+    case "video/x-matroska":
+    case "video/webm":
+    case "video/avi":
+    case "video/quicktime":
+    case "video/x-flv":
+    case "video/x-ms-wmv":
+    case "video/mpeg":
+    case "video/3gpp":
+    case "video/ogv":
+    case "video/mp2t": // MPEG-2 Transport Stream
+    case "video/x-avi": // Another mime type for AVI
+    case "video/x-sgi-movie": // SGI movie file type (less common)
+    case "video/x-realvideo": // RealVideo mime type
+    case "video/divx": // DivX mime type
+    case "video/x-xvid": // Xvid mime type
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Takes a file extension or mime type and returns whether or not it is audio
+ * @param {string} extensionOrMimeType file extension or mime type
+ * @returns {boolean}
+ */
+export function isAudio(extensionOrMimeType) {
+  if (extensionOrMimeType.charAt(0) === ".") {
+    extensionOrMimeType = extensionOrMimeType.slice(1);
+  }
+  switch (extensionOrMimeType.toLowerCase()) {
+    // File extensions
+    case "mp3":
+    case "wav":
+    case "ogg":
+    case "flac":
+    case "aac":
+    case "m4a":
+    case "opus":
+    case "wma":
+    case "aiff":
+    case "alac":
+    case "amr":
+    case "midi":
+    case "mka":
+    // Mime types
+    case "audio/mp3":
+    case "audio/wav":
+    case "audio/ogg":
+    case "audio/flac":
+    case "audio/aac":
+    case "audio/m4a":
+    case "audio/opus":
+    case "audio/x-ms-wma":
+    case "audio/aiff":
+    case "audio/x-apple-lossless":
+    case "audio/amr":
+    case "audio/midi":
+    case "audio/x-matroska":
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Takes a file name or url to a file and breaks off the extension
+ * @param {string} nameOrUrl
+ * @returns {{base: string, extension: string}}
+ */
+export function splitToBaseAndExtension(nameOrUrl) {
+  const parts = nameOrUrl.split(".");
+  const extension = parts.pop();
+  const name = parts.join(".");
+  return {
+    base: name,
+    extension: extension,
+  };
+}

@@ -9,3 +9,27 @@
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
+
+# Mark common audio files as binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.flac binary
+*.aac binary
+
+# Mark common video files as binary
+*.mp4 binary
+*.avi binary
+*.mov binary
+*.mkv binary
+*.webm binary
+
+# Mark common image files as binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.png binary
+*.gif binary
+*.bmp binary
+*.tiff binary
+*.svg binary
