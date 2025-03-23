@@ -8,8 +8,6 @@ import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
 import InlineMediaInputRule from './InlineMediaInputRule';
 import { audioNode, customImageNode, mediaInputRule, mediaNode, remarkDirective, videoNode } from './CustomNodes.js';
-import { upload, uploadConfig } from '@milkdown/kit/plugin/upload';
-import { customUploader } from './UploadPlugin';
 import { ProsemirrorAdapterProvider, usePluginViewFactory, useNodeViewFactory } from '@prosemirror-adapter/react';
 import { slash, SlashView } from './Slash';
 import { $view } from '@milkdown/kit/utils';
@@ -36,7 +34,6 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       audioNode,
       videoNode,
       customImageNode,
-      upload,
       slash,
       remarkDirective,
       mediaNode,
@@ -62,10 +59,6 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
     })));
 
     crepe.editor.config((ctx) => {
-      ctx.update(uploadConfig.key, (prev) => ({
-        ...prev,
-        customUploader,
-      }));
       ctx.set(slash.key, {
         view: pluginViewFactory({
           component: SlashView,
