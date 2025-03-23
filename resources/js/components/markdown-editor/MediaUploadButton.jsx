@@ -10,7 +10,11 @@ const MediaUploadButton = () => {
     if (!finalFile) {
       return;
     }
-    console.log(finalFile);
+
+    const button = document.createElement("a");
+    button.download = finalFile.name;
+    button.href = URL.createObjectURL(finalFile);
+    button.click();
   }, [finalFile]);
 
   const onChange = async (e) => {
@@ -18,23 +22,24 @@ const MediaUploadButton = () => {
     let file = e.target.files[0] || undefined;
     if (file) {
       if (isImage(file.type)) {
-        const imageData  = await createImageBitmap(file);
+        const imageData = await createImageBitmap(file);
         const image = new Image();
         image.width = imageData.width;
         image.height = imageData.height;
         image.src = URL.createObjectURL(file);;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = image.width;
-        canvas.height = image.height;
-        canvas.getContext('2d').drawImage(image, 0, 0);
-        canvas.toBlob((blob) => {
-          const { base, extension } = splitToBaseAndExtension(file.name);
-          // Now we have a `blob` containing webp data
-          // Use the file rename trick to turn it back into a file
-          const myImage = new File([blob], base + '.webp', { type: blob.type });
-          setFinalFile(myImage);
-        }, 'image/webp');
+        image.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = image.width;
+          canvas.height = image.height;
+          canvas.getContext('2d').drawImage(image, 0, 0);
+          canvas.toBlob((blob) => {
+            const { base, extension } = splitToBaseAndExtension(file.name);
+            // Now we have a `blob` containing webp data
+            // Use the file rename trick to turn it back into a file
+            const myImage = new File([blob], base + '.webp', { type: blob.type });
+            setFinalFile(myImage);
+          }, 'image/webp');
+        }
       }
     }
   }
