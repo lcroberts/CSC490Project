@@ -13,7 +13,7 @@ class ImageDescription
     public static function generateImageDescription(string $image, bool $force_generation = false): string
     {
         //Encode image in base64 to send to API
-        $base64_image = base64_encode(file_get_contents($image));
+        $base64_image = base64_encode($image);
 
          $hash = hash('sha256', $base64_image);
         if ((!$force_generation) && (Cache::has($hash))) {
