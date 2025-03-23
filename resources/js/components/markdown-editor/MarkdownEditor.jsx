@@ -11,7 +11,7 @@ import { audioNode, customImageNode, videoNode } from './CustomNodes.js';
 import { upload, uploadConfig } from '@milkdown/kit/plugin/upload';
 import { customUploader } from './UploadPlugin';
 import { ProsemirrorAdapterProvider, usePluginViewFactory } from '@prosemirror-adapter/react';
-import { html } from "@milkdown/kit/component"
+import { slash, SlashView } from './Slash';
 
 const MilkdownEditor = ({ defaultContent }) => {
   const pluginViewFactory = usePluginViewFactory();
@@ -19,10 +19,8 @@ const MilkdownEditor = ({ defaultContent }) => {
     const crepe = new Crepe({
       root: root,
       defaultValue: defaultContent,
-      featureConfigs: {
-        [Crepe.Feature.BlockEdit]: {
-          slashMenuImageLabel: "Media",
-        }
+      features: {
+        [Crepe.Feature.BlockEdit]: false,
       }
     });
     crepe.editor.use([
@@ -32,6 +30,7 @@ const MilkdownEditor = ({ defaultContent }) => {
       videoNode,
       customImageNode,
       upload,
+      slash,
     ]);
 
     crepe.editor.config((ctx) => {
@@ -39,6 +38,11 @@ const MilkdownEditor = ({ defaultContent }) => {
         ...prev,
         customUploader,
       }));
+      ctx.set(slash.key, {
+        view: pluginViewFactory({
+          component: SlashView,
+        })
+      })
     });
     // crepe.editor.use([listener, MarkdownLogPlugin]);
     return crepe;
