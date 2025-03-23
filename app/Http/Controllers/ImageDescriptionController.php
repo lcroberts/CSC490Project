@@ -12,7 +12,7 @@ class ImageDescriptionController extends Controller
     public function sendImage(Request $request)
     {
         $request->validate([
-            'image' => 'required',
+            'image' => 'required|file|image',
             'forceGeneration' => 'required|boolean',
         ]);
 
@@ -20,7 +20,7 @@ class ImageDescriptionController extends Controller
             $image = $request -> input('image');
             $forceGeneration = $request->input("forceGeneration", false);
 
-            $description = ImageDescription::generateImageDescription($image, $forceGeneration);
+            $description = ImageDescription::generateImageDescription(file_get_contents($image), $forceGeneration);
         } catch(Exception $err) {
             return ExceptionHelper::handleError($err);
         }
