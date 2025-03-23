@@ -329,3 +329,17 @@ export function splitToBaseAndExtension(nameOrUrl) {
     extension: extension,
   };
 }
+
+/**
+ * Takes a string and returns whether or not it is a url
+ * @param {string} string
+ * @returns {boolean}
+ */
+export function isUrl(string) {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
