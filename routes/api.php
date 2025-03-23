@@ -4,6 +4,7 @@ use App\Http\Controllers\NoteController;
 use App\Http\Controllers\TagController;
 use App\Http\Middleware\AddApiToken;
 use App\Http\Middleware\AddAuthStatus;
+use App\Http\Controllers\ImageDescriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', AddApiToken::class, AddAuthStatus::class])->group(function () {
@@ -26,5 +27,8 @@ Route::middleware(['auth:sanctum', AddApiToken::class, AddAuthStatus::class])->g
         Route::get('/{note_id}', [TagController::class, 'get'])->name('get');
         Route::post('/{note_id}', [TagController::class, 'generate'])->name('create');
         Route::delete('/{tag_id}/delete', [TagController::class, 'delete'])->name('delete');
+    });
+    Route::prefix('description')->group(function() {
+       Route::post('/send', [ImageDescriptionController::class, 'sendImage'])->name('send');
     });
 });
