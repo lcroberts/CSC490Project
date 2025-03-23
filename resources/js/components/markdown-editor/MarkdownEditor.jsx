@@ -15,8 +15,9 @@ import { slash, SlashView } from './Slash';
 import { $view } from '@milkdown/kit/utils';
 import MediaUploadButton from './MediaUploadButton';
 import MediaDisplayComponent from './MediaDisplayComponent';
+import GetSetMarkdownPlugin from './SetMarkdownPlugin';
 
-const MilkdownEditor = ({ defaultContent }) => {
+const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
   const pluginViewFactory = usePluginViewFactory();
   const nodeViewFactory = useNodeViewFactory();
 
@@ -41,6 +42,10 @@ const MilkdownEditor = ({ defaultContent }) => {
       mediaNode,
       mediaInputRule,
     ]);
+
+    if (setMarkdown) {
+      crepe.editor.use(GetSetMarkdownPlugin(setMarkdown));
+    }
 
     crepe.editor.use($view(mediaNode, () => nodeViewFactory({
       component: MediaUploadButton,
@@ -67,18 +72,24 @@ const MilkdownEditor = ({ defaultContent }) => {
         })
       })
     });
-    // crepe.editor.use([listener, MarkdownLogPlugin]);
+    crepe.editor.use([listener, MarkdownLogPlugin]);
     return crepe;
   });
 
   return <Milkdown />;
 };
 
-export const MarkdownEditor = ({ defaultContent }) => {
+/**
+ * @param {string} defaultContent - Default editor content
+ * @param {?Function} setMarkdown - A function that takes the markdown value of the string and is ran on an editor change
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export const MarkdownEditor = ({ defaultContent = "", setMarkdown = null }) => {
   return (
     <MilkdownProvider>
       <ProsemirrorAdapterProvider>
-        <MilkdownEditor defaultContent={defaultContent} />
+        <MilkdownEditor defaultContent={defaultContent} setMarkdown={setMarkdown} />
       </ProsemirrorAdapterProvider>
     </MilkdownProvider>
   );
