@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
 
 const MediaUploadButton = () => {
-  const { contentRef, getPos, node } = useNodeViewContext()
+  const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
   const http = useAxios();
 
@@ -23,7 +23,6 @@ const MediaUploadButton = () => {
     const view = ctx.get(editorViewCtx);
     const { dispatch, state } = view;
     const { tr, selection } = state;
-    console.log(selection.from, selection.to);
 
     const src = URL.createObjectURL(finalFile);
     const alt = finalFile.name;
