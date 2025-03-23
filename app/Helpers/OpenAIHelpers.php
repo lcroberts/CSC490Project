@@ -69,7 +69,7 @@ class OpenAIHelpers
      *
      */
 
-    public static function submitWhisper(string $endpoint, string $content)
+    public static function submitTranscription($audio)
     {
         $client = curl_init();
 
@@ -78,10 +78,15 @@ class OpenAIHelpers
             'Authorization: Bearer ' . env('OPENAI_KEY'),
         ];
 
-        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/" . $endpoint);
+        $data = [
+            'file' => fopen($audio, "r"),
+            'model' => 'whisper-1',
+        ];
+
+        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/audio/transcriptions");
         curl_setopt($client, CURLOPT_POST, 1);
         curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($client, CURLOPT_POSTFIELDS, $content);
+        curl_setopt($client, CURLOPT_POSTFIELDS, $data);
         curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
 
         $result = curl_exec($client);
@@ -91,15 +96,6 @@ class OpenAIHelpers
 
     }
 
-    public static function submitTrancription($audio)
-    {
-        $content = json_encode(array(
-            'file' => $audio,
-            'model' => 'whisper-1',
-        ));
 
-        $result = OpenAIHelpers::submitWhisper("audio/transcriptions", $content);
-        return $result;
 
-    }
 }

@@ -10,23 +10,24 @@ class AudioTranscript
 {
     public static function generateAudioTranscript($audio, bool $force_generation = false): string
     {
-          $hash = hash('sha256', file_get_contents($audio));
+         /* $hash = hash('sha256', file_get_contents($audio));
           if ((! $force_generation) && (Cache::has($hash))) {
               return Cache::get($hash);
-          }
+          }*/
 
 
-        $response = OpenAIHelpers::submitTrancription($audio);
+        $response = OpenAIHelpers::submitTranscription($audio);
 
         $json = json_decode($response);
         if (empty($json)) {
             throw new UnexpectedValueException("Empty JSON object returned by API while generating audio transcript.");
         }
+        print_r($json);
 
-        $transcript = $json->choices[0]->message->content;
+        $transcript = $json->text;
 
-        $duration = new DateInterval ('P1W');
-        Cache::add($hash, $transcript, $duration);
+        /*$duration = new DateInterval ('P1W');
+        Cache::add($hash, $transcript, $duration);*/
 
         return $transcript;
     }
