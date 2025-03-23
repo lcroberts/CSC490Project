@@ -14,6 +14,7 @@ import { ProsemirrorAdapterProvider, usePluginViewFactory, useNodeViewFactory } 
 import { slash, SlashView } from './Slash';
 import { $view } from '@milkdown/kit/utils';
 import MediaUploadButton from './MediaUploadButton';
+import MediaDisplayComponent from './MediaDisplayComponent';
 
 const MilkdownEditor = ({ defaultContent }) => {
   const pluginViewFactory = usePluginViewFactory();
@@ -43,7 +44,17 @@ const MilkdownEditor = ({ defaultContent }) => {
 
     crepe.editor.use($view(mediaNode, () => nodeViewFactory({
       component: MediaUploadButton,
-    })))
+    })));
+
+    crepe.editor.use($view(customImageNode, () => nodeViewFactory({
+      component: MediaDisplayComponent,
+    })));
+    crepe.editor.use($view(audioNode, () => nodeViewFactory({
+      component: MediaDisplayComponent,
+    })));
+    crepe.editor.use($view(videoNode, () => nodeViewFactory({
+      component: MediaDisplayComponent,
+    })));
 
     crepe.editor.config((ctx) => {
       ctx.update(uploadConfig.key, (prev) => ({
