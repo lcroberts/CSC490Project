@@ -13,7 +13,7 @@ class ImageDescriptionController extends Controller
     {
         $request->validate([
             'image' => 'required|file|image',
-            'forceGeneration' => 'required|boolean',
+            'forceGeneration' => 'nullable|boolean',
         ]);
 
         try {
