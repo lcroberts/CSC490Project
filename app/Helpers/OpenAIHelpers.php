@@ -13,7 +13,7 @@ class OpenAIHelpers
     private static function submitAny(string $endpoint, string $content)
     {
         $client = curl_init();
-        
+
         $headers = [
             'Content-Type: application/json',
             'Authorization: Bearer ' . env('OPENAI_KEY'),
@@ -34,7 +34,7 @@ class OpenAIHelpers
      * Submits a request to the chat completion API.
      *
      * @param string    $system Text payload for the prolog / system role
-     * @param string    $user   Text payload fro the user prompt.
+     * @param string    $user   Text payload for the user prompt.
      *
      * To create similar function calls for other endpoints, simply submitAny to the requisite
      * endpoint after doing whatever data translation is required.
@@ -56,6 +56,33 @@ class OpenAIHelpers
                 array('role' => 'system', 'content' => $system),
                 array('role' => 'user', 'content' => $user),
             ),
+        ));
+
+        $result = OpenAIHelpers::submitAny("chat/completions", $content);
+        return $result;
+    }
+
+    public static function submitImage(string $system, string $user, string $image){
+        $system = json_encode([
+            'role' => 'system',
+            'content' => $system,
+        ]);
+        $user = json_encode([
+            'role' => 'user',
+            'content' => array(
+                array('type' => 'text', 'text' => $user),
+                array('type' => 'image_url', 'image_url' => array('url' => "data:image/webp;base64,{$image}")),
+            ),
+        ]);
+
+        print_r($user);
+
+        $content = json_encode(array(
+            'model' => env('OPENAI_MODEL'),
+            'messages' => array(
+                array('role' => 'system', 'content' => $system),
+                array('role' => 'user', 'content' => $user),
+            )
         ));
 
         $result = OpenAIHelpers::submitAny("chat/completions", $content);

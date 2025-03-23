@@ -4,7 +4,13 @@ import {
   isVideo,
   splitToBaseAndExtension,
 } from "@/lib/utils";
-import { $node } from "@milkdown/kit/utils";
+import { $inputRule, $node, $remark } from "@milkdown/kit/utils";
+import { SlashView } from "./Slash";
+import { InputRule } from "@milkdown/prose/inputrules";
+import directive from "remark-directive";
+
+const remarkPluginId = "remark-directive";
+const remarkDirective = $remark(remarkPluginId, () => directive);
 
 const audioNode = $node("audio", () => ({
   group: "block",
@@ -123,7 +129,7 @@ const customImageNode = $node("custom-image", () => ({
   },
   parseDOM: [
     {
-      tag: "custom-image",
+      tag: "img",
       getAttrs: (dom) => {
         return {
           src: dom.getAttribute("src"),
@@ -161,4 +167,62 @@ const customImageNode = $node("custom-image", () => ({
   },
 }));
 
-export { audioNode, videoNode, customImageNode };
+const mediaNode = $node("media", () => ({
+  group: "block",
+  atom: true,
+  isolating: true,
+  marks: "",
+  attrs: {
+    src: { default: null },
+    alt: { default: null },
+  },
+  parseDOM: [
+    {
+      tag: "input.media-upload",
+      getAttrs: (dom) => {
+        return {};
+      },
+    },
+  ],
+  toDOM: (node) => {
+    return ["input", { ...node.attrs, type: "file", class: "media-upload" }, 0];
+  },
+  parseMarkdown: {
+    match: (node) => node.type === "leafDirective" && node.name === "media",
+    runner: (state, node, type) => {
+      state.addNode(type, {});
+    },
+  },
+  toMarkdown: {
+    match: (node) => node.type.name === "media",
+    runner: (state, node) => {
+      state.addNode("leafDirective", undefined, undefined, {
+        name: "media",
+        attributes: {},
+      });
+    },
+  },
+}));
+
+const mediaInputRule = $inputRule(
+  (ctx) =>
+    new InputRule(/::media/, (state, match, start, end) => {
+      const [okay] = match;
+      const { tr } = state;
+
+      if (okay) {
+        tr.replaceWith(start - 1, end, mediaNode.type(ctx).create());
+      }
+
+      return tr;
+    }),
+);
+
+export {
+  audioNode,
+  videoNode,
+  customImageNode,
+  remarkDirective,
+  mediaNode,
+  mediaInputRule,
+};
