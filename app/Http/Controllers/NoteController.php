@@ -13,14 +13,14 @@ class NoteController extends Controller
     public function index()
     {
         $notes = [];
-        
+
         try {
            $notes = Note::getNotesList();
         } catch (Exception $err) {
            return ExceptionHelper::handleException($err);
         }
 
-        return response()->json($notes, 200); 
+        return response()->json($notes, 200);
     }
 
     public function get(int $id)
@@ -68,7 +68,7 @@ class NoteController extends Controller
         return response()->json(['action' => 'store'], 200);
     }
 
-    public function delete(int $note_id)
+    public function delete(Request $request, int $note_id)
     {
         try {
             Note::remove($request->input($note_id));
@@ -82,7 +82,7 @@ class NoteController extends Controller
     public function indexMedia(int $note_id)
     {
         $media_list = [];
-        
+
         try {
             $media_list = Note::getMediaList($note_id);
         } catch (Exception $err) {
