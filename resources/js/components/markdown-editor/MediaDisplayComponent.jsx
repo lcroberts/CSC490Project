@@ -25,7 +25,8 @@ const MediaDisplayComponent = () => {
 
       func();
     }
-  })
+  }, [])
+
   return (
     <>
       {src !== null ?
