@@ -21,28 +21,43 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, D
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { TypeAnimation } from 'react-type-animation';
+import useAxios from "@/hooks/useAxios";
 
 export default function Dashboard() {
   const user = usePage().props.auth.user; // Get the user from the page props
+  const http = useAxios();
   const { notes, activeNote } = useAppState(); // Get the notes and active note from the app state
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for the dialog
   const [isLoading, setIsLoading] = useState(false); // State for loading state
   const [progress, setProgress] = useState(0);  // State for progress
 
-  const handleDialogOpen = () => { // Function to handle dialog open
+  const handleDialogOpen = async () => {
     setIsLoading(true);
     setIsDialogOpen(true);
     setProgress(0);
-    const timer = setInterval(() => {
-      setProgress((prev) => { // Controls the progress of the loading bar
-        if (prev >= 100) {
-          clearInterval(timer);
-          setIsLoading(false);
-          return 100;
-        }
-        return prev + 3;
+
+    try {
+      if (!notes[activeNote]?.content) {
+        throw new Error('No content available to summarize.');
+      }
+
+      const response = await http.post('/api/summary/send', {
+        noteContent: notes[activeNote]?.content,
+        forceGeneration: false,
       });
-    }, 100); // Update progress every 100ms
+
+      setSummary(response.data.summary || 'No summary available.');
+    } catch (error) {
+      console.error('Error fetching summary:', error);
+      if (error.response && error.response.status === 422) {
+        setSummary('Invalid content. Please provide valid text to summarize.');
+      } else {
+        setSummary('Failed to fetch summary. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   return (
