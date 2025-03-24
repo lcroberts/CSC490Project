@@ -91,7 +91,7 @@ export async function decryptString(string, key) {
 /**
  * @param {Uint8Array} buffer
  * @param {CryptoKey} key
- * @returns {Promise<Uint8Array>} Encrypted Data
+ * @returns {Promise<string>} a base64 encoded binary string
  */
 export async function encryptBuffer(buffer, key) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -110,15 +110,17 @@ export async function encryptBuffer(buffer, key) {
   retBuffer.set(iv, 0);
   retBuffer.set(encrypted, iv.byteLength);
 
-  return retBuffer;
+  return arrayToBase64(retBuffer);
 }
 
 /**
- * @param {Uint8Array} encryptedBuffer
+ * @param {string} string Should be a base64 encrypted binary string
  * @param {CryptoKey} key
  * @returns {Promise<Uint8Array>} the decoded binary data
  */
-export async function decryptData(encryptedBuffer, key) {
+export async function decryptData(string, key) {
+  const encryptedBuffer = base64ToArray(string);
+
   const iv = encryptedBuffer.slice(0, 12);
   const ciphertext = encryptedBuffer.slice(12);
   const plaintext = new Uint8Array(

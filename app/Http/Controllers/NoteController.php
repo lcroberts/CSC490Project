@@ -101,9 +101,7 @@ class NoteController extends Controller
             return ExceptionHelper::handleException($err);
         }
 
-        return response($media, 200, [
-            'Content-Type' => 'application/octet-stream',
-        ]);
+        return response()->json(['body' => $media], 200);
     }
 
     public function addMedia(Request $request)

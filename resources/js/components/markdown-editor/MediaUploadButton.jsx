@@ -37,20 +37,16 @@ const MediaUploadButton = () => {
         const buffer = new Uint8Array(event.target.result);
         const key = await getEncryptionKey()
         const fileData = await encryptBuffer(buffer, key);
-        console.log(fileData);
-        const file = new File(fileData, finalFile.name, {
-          type: finalFile.type
-        });
-        formData.append("body", file);
+        formData.append("body", fileData);
         http.post("/api/media/create", formData).then((res) => {
           setTimeout(() => {
-            if (isVideo(file.type)) {
+            if (isVideo(finalFile.type)) {
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
                 videoNode.type(ctx).create({ src: src, alt: alt }),
               ));
-            } else if (isAudio(file.type)) {
+            } else if (isAudio(finalFile.type)) {
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,

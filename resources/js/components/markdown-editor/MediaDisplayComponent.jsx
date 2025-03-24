@@ -15,17 +15,10 @@ const MediaDisplayComponent = () => {
       // Fetch media from server in this case
       const func = async () => {
         const noteId = 1;
-        const res = await http.get(`/api/media/${noteId}/${node.attrs.src}`, {
-          responseType: "blob"
-        });
-        console.log(res.data);
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const buffer = new Uint8Array(e.target.result);
-          const key = await getEncryptionKey();
-          const data = await decryptData(buffer, key);
-        }
-        reader.readAsArrayBuffer(res.data);
+        const contents = (await http.get(`/api/media/${noteId}/${node.attrs.src}`)).data.body;
+        const key = await getEncryptionKey();
+        const data = await decryptData(contents, key);
+        setSrc(URL.createObjectURL(data));
       }
 
       func();
