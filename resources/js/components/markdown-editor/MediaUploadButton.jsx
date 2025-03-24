@@ -1,5 +1,5 @@
 import useAxios from "@/hooks/useAxios";
-import { isAudio, isImage, isVideo, splitToBaseAndExtension } from "@/lib/utils";
+import { encryptBuffer, getEncryptionKey, isAudio, isImage, isVideo, splitToBaseAndExtension } from "@/lib/utils";
 import { editorViewCtx } from "@milkdown/kit/core";
 import { useInstance } from "@milkdown/react";
 import { useNodeViewContext } from "@prosemirror-adapter/react"
@@ -25,38 +25,47 @@ const MediaUploadButton = () => {
       const { dispatch, state } = view;
       const { tr, selection } = state;
 
-      const src = URL.createObjectURL(finalFile);
+      const src = finalFile.name;
       const alt = finalFile.name;
       // TODO: Use sumamries to get alt text
 
       const formData = new FormData();
       formData.append("name", finalFile.name);
       formData.append("note_id", 1); // TODO: Use appropriate note_id
-      formData.append("body", finalFile); // TODO: Encrypt data
-      http.post("/api/media/create", formData).then((res) => {
-        console.log(res);
-        setTimeout(() => {
-          if (isVideo(finalFile.type)) {
-            dispatch(tr.replaceWith(
-              selection.from,
-              selection.to,
-              videoNode.type(ctx).create({ src: src, alt: alt }),
-            ));
-          } else if (isAudio(finalFile.type)) {
-            dispatch(tr.replaceWith(
-              selection.from,
-              selection.to,
-              audioNode.type(ctx).create({ src: src, alt: alt }),
-            ));
-          } else {
-            dispatch(tr.replaceWith(
-              selection.from,
-              selection.to,
-              customImageNode.type(ctx).create({ src: src, alt: alt }),
-            ));
-          }
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        const buffer = new Uint8Array(event.target.result);
+        const key = await getEncryptionKey()
+        const fileData = await encryptBuffer(buffer, key);
+        const file = new File(fileData, finalFile.name, {
+          type: finalFile.type
         });
-      });
+        formData.append("body", file);
+        http.post("/api/media/create", formData).then((res) => {
+          setTimeout(() => {
+            if (isVideo(file.type)) {
+              dispatch(tr.replaceWith(
+                selection.from,
+                selection.to,
+                videoNode.type(ctx).create({ src: src, alt: alt }),
+              ));
+            } else if (isAudio(file.type)) {
+              dispatch(tr.replaceWith(
+                selection.from,
+                selection.to,
+                audioNode.type(ctx).create({ src: src, alt: alt }),
+              ));
+            } else {
+              dispatch(tr.replaceWith(
+                selection.from,
+                selection.to,
+                customImageNode.type(ctx).create({ src: src, alt: alt }),
+              ));
+            }
+          });
+        });
+      };
+      reader.readAsArrayBuffer(finalFile);
     }
 
     func();
