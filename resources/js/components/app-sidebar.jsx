@@ -62,12 +62,18 @@ export function AppSidebar({ children, ...props }) {
   // IRL you should use the url/router.
   const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const [activeNoteIndex, setActiveNoteIndex] = React.useState(null);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
   const user = {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
   const { notes, setActiveNote } = useAppState();
+
+  const filteredNotes = notes.filter(note =>
+    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Sidebar
@@ -138,17 +144,17 @@ export function AppSidebar({ children, ...props }) {
             <div className="text-base font-medium text-foreground">
               {activeItem.title}
             </div>
-            <Label className="flex items-center gap-2 text-sm">
-              <span>Dark Mode</span>
-              <Switch className="shadow-none" />
-            </Label>
           </div>
-          <SidebarInput placeholder="Type to search..." />
+          <SidebarInput
+            placeholder="Type to search..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </SidebarHeader>
         <SidebarContent className="scrollbar">
           <SidebarGroup className="px-0">
             <SidebarGroupContent>
-              {notes.map((note, idx) => (
+              {filteredNotes.map((note, idx) => (
                 <div
                   key={idx}
                   className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNoteIndex === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
@@ -166,9 +172,9 @@ export function AppSidebar({ children, ...props }) {
                     {note.content}
                   </span>
                   <div className="flex gap-2 mt-2">
-                    <span className="bg-red-400 text-white text-xs px-2 py-1 rounded">Fishing</span>
+                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Fishing</span>
                     <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Cooking</span>
-                    <span className="bg-red-400 text-white text-xs px-2 py-1 rounded">Music</span>
+                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
                     <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
                   </div>
                 </div>
