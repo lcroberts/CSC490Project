@@ -15,38 +15,51 @@ const MediaUploadButton = () => {
   const [finalFile, setFinalFile] = useState(null);
 
   useEffect(() => {
-    if (!finalFile) {
-      return;
-    }
-    const editor = getInstance();
-    const ctx = editor.ctx;
-    const view = ctx.get(editorViewCtx);
-    const { dispatch, state } = view;
-    const { tr, selection } = state;
-
-    const src = URL.createObjectURL(finalFile);
-    const alt = finalFile.name;
-    setTimeout(() => {
-      if (isVideo(finalFile.type)) {
-        dispatch(tr.replaceWith(
-          selection.from,
-          selection.to,
-          videoNode.type(ctx).create({ src: src, alt: alt }),
-        ));
-      } else if (isAudio(finalFile.type)) {
-        dispatch(tr.replaceWith(
-          selection.from,
-          selection.to,
-          audioNode.type(ctx).create({ src: src, alt: alt }),
-        ));
-      } else {
-        dispatch(tr.replaceWith(
-          selection.from,
-          selection.to,
-          customImageNode.type(ctx).create({ src: src, alt: alt }),
-        ));
+    const func = async () => {
+      if (!finalFile) {
+        return;
       }
-    })
+      const editor = getInstance();
+      const ctx = editor.ctx;
+      const view = ctx.get(editorViewCtx);
+      const { dispatch, state } = view;
+      const { tr, selection } = state;
+
+      const src = URL.createObjectURL(finalFile);
+      const alt = finalFile.name;
+      // TODO: Use sumamries to get alt text
+
+      const formData = new FormData();
+      formData.append("name", finalFile.name);
+      formData.append("note_id", 1); // TODO: Use appropriate note_id
+      formData.append("body", finalFile); // TODO: Encrypt data
+      http.post("/api/media/create", formData).then((res) => {
+        console.log(res);
+        setTimeout(() => {
+          if (isVideo(finalFile.type)) {
+            dispatch(tr.replaceWith(
+              selection.from,
+              selection.to,
+              videoNode.type(ctx).create({ src: src, alt: alt }),
+            ));
+          } else if (isAudio(finalFile.type)) {
+            dispatch(tr.replaceWith(
+              selection.from,
+              selection.to,
+              audioNode.type(ctx).create({ src: src, alt: alt }),
+            ));
+          } else {
+            dispatch(tr.replaceWith(
+              selection.from,
+              selection.to,
+              customImageNode.type(ctx).create({ src: src, alt: alt }),
+            ));
+          }
+        });
+      });
+    }
+
+    func();
   }, [finalFile]);
 
   const onChange = async (e) => {

@@ -7,6 +7,8 @@ use App\Models\Note;
 use Exception;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log as FacadesLog;
+use Log;
 
 class NoteController extends Controller
 {
@@ -107,14 +109,14 @@ class NoteController extends Controller
 
     public function addMedia(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:255',
             'note_id' => 'required|integer',
             'body' => 'required',
         ]);
 
         try {
-            Note::attachMedia($request->input('name'), $request->input('note_id'), $request->input('body'));
+            Note::attachMedia($validated['name'], $validated['note_id'], $validated['body']);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }

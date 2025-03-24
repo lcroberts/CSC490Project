@@ -68,7 +68,7 @@ class Note
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save notes to disk.");
-        
+
         $params = [
             'id' => $id,
             'user' => Auth::id(),
@@ -107,7 +107,7 @@ class Note
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save notes to disk.");
-        
+
         $params = [
             'id' => $id,
             'user_id' => Auth::id(),
