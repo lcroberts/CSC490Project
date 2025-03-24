@@ -34,7 +34,7 @@ class OpenAIHelpers
      * Submits a request to the chat completion API.
      *
      * @param string    $system Text payload for the prolog / system role
-     * @param string    $user   Text payload fro the user prompt.
+     * @param string    $user   Text payload for the user prompt.
      *
      * To create similar function calls for other endpoints, simply submitAny to the requisite
      * endpoint after doing whatever data translation is required.
@@ -62,40 +62,42 @@ class OpenAIHelpers
         return $result;
     }
 
-    /**
-     * Submits a request to audio transcription API.
-     * @param string $system Text payload for the prolog / system role
-     * @param string $user Text payload for the user prompt.
-     *
-     */
+    public static function submitImage(string $system, string $user, string $image){
+        $system = json_encode([
+            'role' => 'system',
+            'content' => $system,
+        ]);
+        $user = json_encode([
+            'role' => 'user',
+            'content' => array(
+                array('type' => 'text', 'text' => $user),
+                array('type' => 'image_url', 'image_url' => array('url' => "data:image/webp;base64,{$image}")),
+            ),
+        ]);
 
-    public static function submitTranscription($audio)
+        print_r($user);
+
+        $content = json_encode(array(
+            'model' => env('OPENAI_MODEL'),
+            'messages' => array(
+                array('role' => 'system', 'content' => $system),
+                array('role' => 'user', 'content' => $user),
+            )
+        ));
+
+        $result = OpenAIHelpers::submitAny("chat/completions", $content);
+        return $result;
+    }
+
+    public static function submitTrancription($audio)
     {
-        $client = curl_init();
-
-        $headers = [
-            'Content-Type: multipart/form-data',
-            'Authorization: Bearer ' . env('OPENAI_KEY'),
-        ];
-
-        $data = [
-            'file' => fopen($audio, "r"),
+        $content = json_encode(array(
+            'file' => $audio,
             'model' => 'whisper-1',
-        ];
+        ));
 
-        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/audio/transcriptions");
-        curl_setopt($client, CURLOPT_POST, 1);
-        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($client, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
-
-        $result = curl_exec($client);
-        curl_close($client);
-
+        $result = OpenAIHelpers::submitWhisper("audio/transcriptions", $content);
         return $result;
 
     }
-
-
-
 }
