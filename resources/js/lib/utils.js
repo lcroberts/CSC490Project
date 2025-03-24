@@ -306,6 +306,7 @@ export function isAudio(extensionOrMimeType) {
     case "mka":
     // Mime types
     case "audio/mp3":
+    case "audio/mpeg":
     case "audio/wav":
     case "audio/ogg":
     case "audio/flac":
