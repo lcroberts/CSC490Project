@@ -15,10 +15,12 @@ const MediaDisplayComponent = () => {
       // Fetch media from server in this case
       const func = async () => {
         const noteId = 1;
-        const contents = (await http.get(`/api/media/${noteId}/${node.attrs.src}`)).data.body;
+        let contents = await http.get(`/api/media/${noteId}/${node.attrs.src}`);
+        contents = contents.data.body;
         const key = await getEncryptionKey();
         const data = await decryptData(contents, key);
-        setSrc(URL.createObjectURL(data));
+        const blob = new Blob([data]);
+        setSrc(URL.createObjectURL(blob));
       }
 
       func();

@@ -272,6 +272,6 @@ class Note
             throw new UnauthorizedException("User must be authenticated to see list of media for note.");
 
         $disk = StorageHelpers::getS3Disk($disk_root);
-        return $disk->get(Auth::id() . "/media/" . $note_id . "/" . $name . ".bin");
+        return $disk->get(Auth::id() . "/media/" . $note_id . "/" . $name);
     }
 }
