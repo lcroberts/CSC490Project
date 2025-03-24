@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ExceptionHelper;
 use App\Models\Note;
 use Exception;
-
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log as FacadesLog;
-use Log;
 
 class NoteController extends Controller
 {
@@ -17,9 +14,9 @@ class NoteController extends Controller
         $notes = [];
 
         try {
-           $notes = Note::getNotesList();
+            $notes = Note::getNotesList();
         } catch (Exception $err) {
-           return ExceptionHelper::handleException($err);
+            return ExceptionHelper::handleException($err);
         }
 
         return response()->json($notes, 200);
@@ -104,7 +101,9 @@ class NoteController extends Controller
             return ExceptionHelper::handleException($err);
         }
 
-        return response()->json(['body' => $media], 200);
+        return response($media, 200, [
+            'Content-Type' => 'application/octet-stream',
+        ]);
     }
 
     public function addMedia(Request $request)

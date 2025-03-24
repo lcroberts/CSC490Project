@@ -37,6 +37,7 @@ const MediaUploadButton = () => {
         const buffer = new Uint8Array(event.target.result);
         const key = await getEncryptionKey()
         const fileData = await encryptBuffer(buffer, key);
+        console.log(fileData);
         const file = new File(fileData, finalFile.name, {
           type: finalFile.type
         });

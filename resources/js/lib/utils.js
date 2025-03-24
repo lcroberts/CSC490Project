@@ -114,13 +114,11 @@ export async function encryptBuffer(buffer, key) {
 }
 
 /**
- * @param {string} string Should be a base64 encrypted binary string
+ * @param {Uint8Array} encryptedBuffer
  * @param {CryptoKey} key
  * @returns {Promise<Uint8Array>} the decoded binary data
  */
-export async function decryptData(string, key) {
-  const encryptedBuffer = base64ToArray(string);
-
+export async function decryptData(encryptedBuffer, key) {
   const iv = encryptedBuffer.slice(0, 12);
   const ciphertext = encryptedBuffer.slice(12);
   const plaintext = new Uint8Array(
