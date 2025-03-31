@@ -72,7 +72,7 @@ class Tag
         return $indices;
     }
 
-    private static function save(int $note_id, string $content): int
+    public static function save(int $note_id, string $content): int
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save tags.");
