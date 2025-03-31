@@ -17,12 +17,12 @@ class ImageDescriptionController extends Controller
         ]);
 
         try {
-            $image = $request -> input('image');
+            $image = $request -> file('image');
             $forceGeneration = $request->input("forceGeneration", false);
 
             $description = ImageDescription::generateImageDescription(file_get_contents($image), $forceGeneration);
         } catch(Exception $err) {
-            return ExceptionHelper::handleError($err);
+            return ExceptionHelper::handleException($err);
         }
 
 

@@ -91,12 +91,29 @@ class OpenAIHelpers
 
     public static function submitTrancription($audio)
     {
+
+
+        $client = curl_init();
+
+        $headers = [
+            'Content-Type: multipart/form-data',
+            'Authorization: Bearer ' . env('OPENAI_KEY'),
+        ];
+
         $content = json_encode(array(
             'file' => $audio,
             'model' => 'whisper-1',
         ));
 
-        $result = OpenAIHelpers::submitWhisper("audio/transcriptions", $content);
+        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/audio/transcriptions");
+        curl_setopt($client, CURLOPT_POST, true);
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($client, CURLOPT_POSTFIELDS, $content);
+        curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($client);
+        curl_close($client);
+
         return $result;
 
     }
