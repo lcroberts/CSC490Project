@@ -31,7 +31,7 @@ class ExceptionHelper
                 break;
         }
 
-        Log::error(__METHOD__.$exception->getMessage().PHP_EOL.$exception->getTrace());
+        Log::error(__METHOD__.$exception->getMessage().PHP_EOL.$exception->getTraceAsString());
 
         if (config('app.debug')) {
             $response['err_code'] = $exception->getCode();
