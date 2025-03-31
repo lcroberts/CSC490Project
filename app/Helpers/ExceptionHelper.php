@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Helpers;
+
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Log;
 
 class ExceptionHelper
 {
-    private static function getStatusCode(Exception $exception) {
+    private static function getStatusCode(Exception $exception)
+    {
         if ($exception instanceof AuthenticationException) {
             return 401;
         }
@@ -17,7 +20,7 @@ class ExceptionHelper
     public static function handleException(Exception $exception)
     {
         $response = [];
-        $statusCode = self::getStatusCode($exception);    
+        $statusCode = self::getStatusCode($exception);
 
         switch ($statusCode) {
             case 401:
@@ -27,6 +30,8 @@ class ExceptionHelper
                 $response['message'] = 'Whoops, something went wrong!';
                 break;
         }
+
+        Log::error(__METHOD__.$exception->getMessage().PHP_EOL.$exception->getTraceAsString());
 
         if (config('app.debug')) {
             $response['err_code'] = $exception->getCode();

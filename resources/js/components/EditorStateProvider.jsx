@@ -16,7 +16,7 @@ export default function EditorStateProvider({ children }) {
 
 ![here is cat audio](cat.mp3)
 
-![here is cat image](cat.jpg)
+![here is cat image](cat.webp)
 
 ![here is cat video](cat.mp4)`,
     },

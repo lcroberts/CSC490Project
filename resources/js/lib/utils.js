@@ -24,7 +24,16 @@ export function base64ToArray(base64) {
  * @returns {string}
  */
 export function arrayToBase64(array) {
-  return btoa(String.fromCharCode.apply(null, array));
+  const CHUNK_SIZE = 0x8000; // 32KB
+  const chunks = [];
+
+  for (let i = 0; i < array.length; i += CHUNK_SIZE) {
+    const chunk = array.slice(i, i + CHUNK_SIZE);
+    chunks.push(String.fromCharCode.apply(null, chunk));
+  }
+
+  const binaryString = chunks.join('');
+  return btoa(binaryString);
 }
 
 export async function generateEncryptionKey(password) {
@@ -297,6 +306,7 @@ export function isAudio(extensionOrMimeType) {
     case "mka":
     // Mime types
     case "audio/mp3":
+    case "audio/mpeg":
     case "audio/wav":
     case "audio/ogg":
     case "audio/flac":

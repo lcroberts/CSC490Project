@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\ExceptionHelper;
 use App\Models\Note;
 use Exception;
-
 use Illuminate\Http\Request;
 
 class NoteController extends Controller
@@ -13,14 +12,14 @@ class NoteController extends Controller
     public function index()
     {
         $notes = [];
-        
+
         try {
-           $notes = Note::getNotesList();
+            $notes = Note::getNotesList();
         } catch (Exception $err) {
-           return ExceptionHelper::handleException($err);
+            return ExceptionHelper::handleException($err);
         }
 
-        return response()->json($notes, 200); 
+        return response()->json($notes, 200);
     }
 
     public function get(int $id)
@@ -68,7 +67,7 @@ class NoteController extends Controller
         return response()->json(['action' => 'store'], 200);
     }
 
-    public function delete(int $note_id)
+    public function delete(Request $request, int $note_id)
     {
         try {
             Note::remove($request->input($note_id));
@@ -82,7 +81,7 @@ class NoteController extends Controller
     public function indexMedia(int $note_id)
     {
         $media_list = [];
-        
+
         try {
             $media_list = Note::getMediaList($note_id);
         } catch (Exception $err) {
@@ -107,14 +106,14 @@ class NoteController extends Controller
 
     public function addMedia(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|max:255',
             'note_id' => 'required|integer',
             'body' => 'required',
         ]);
 
         try {
-            Note::attachMedia($request->input('name'), $request->input('note_id'), $request->input('body'));
+            Note::attachMedia($validated['name'], $validated['note_id'], $validated['body']);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }

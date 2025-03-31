@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\UnauthorizedException;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Note
 {
@@ -68,7 +69,7 @@ class Note
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save notes to disk.");
-        
+
         $params = [
             'id' => $id,
             'user' => Auth::id(),
@@ -107,7 +108,7 @@ class Note
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to save notes to disk.");
-        
+
         $params = [
             'id' => $id,
             'user_id' => Auth::id(),
@@ -168,8 +169,15 @@ class Note
             throw new UnauthorizedException("User must be authentcated to attach media to note.");
 
         $disk = StorageHelpers::getS3Disk($disk_root);
-        if (!$disk->put(Auth::id() . "/media/" . $note_id . "/" . $name, $media)) {
-            throw new RuntimeException("Could not store media " . $name . " to note " . $note_id . "on disk.");
+        $path = Auth::id() . "/media/" . $note_id . "/" . $name;
+        if ($media instanceof UploadedFile) {
+            if (!$disk->put($path, $media->getContent())) {
+                throw new RuntimeException("Could not store media " . $name . " to note " . $note_id . "on disk.");
+            }
+        } else {
+            if (!$disk->put($path, $media)) {
+                throw new RuntimeException("Could not store media " . $name . " to note " . $note_id . "on disk.");
+            }
         }
     }
 

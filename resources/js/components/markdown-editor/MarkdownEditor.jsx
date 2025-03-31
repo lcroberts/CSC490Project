@@ -38,11 +38,13 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       remarkDirective,
       mediaNode,
       mediaInputRule,
+      listener
     ]);
 
     if (setMarkdown) {
       crepe.editor.use(GetSetMarkdownPlugin(setMarkdown));
     }
+    // crepe.editor.use(MarkdownLogPlugin);
 
     crepe.editor.use($view(mediaNode, () => nodeViewFactory({
       component: MediaUploadButton,
@@ -65,7 +67,6 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
         })
       })
     });
-    crepe.editor.use([listener, MarkdownLogPlugin]);
     return crepe;
   });
 
