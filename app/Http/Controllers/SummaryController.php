@@ -15,12 +15,16 @@ class SummaryController extends Controller
         $request->validate([
             'noteContent' => 'required',
             'forceGeneration' => 'nullable|boolean',
+            'nParagraphs' => 'nullable|integer',
+            'includeVocabList' => 'nullable|boolean',
         ]);
 
-         
+
         try {
             $noteContent = $request->input('noteContent');
             $forceGeneration = $request->input('forceGeneration', false);
+            $nParagraphs = $request->input('nParagraphs', 1);
+            $includeVocabList = $request->input('includeVocabList', false);
 
             $summary = Summary::generateTextSummary($noteContent, $forceGeneration);
         } catch (Exception $err) {
