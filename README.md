@@ -113,3 +113,7 @@ post_max_size = 256M
 upload_max_filesize = 256M
 memory_limit = 512M
 ```
+
+## Deploying
+
+When deploying run the command `composer run optimize`
