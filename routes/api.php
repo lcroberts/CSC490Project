@@ -4,11 +4,9 @@ use App\Http\Controllers\ImageDescriptionController;
 use App\Http\Controllers\NoteController;
 use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TagController;
-use App\Http\Middleware\AddApiToken;
-use App\Http\Middleware\AddAuthStatus;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum', AddApiToken::class, AddAuthStatus::class])->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::group(['prefix' => 'notes', 'as' => 'notes.'], function () {
         Route::get('/', [NoteController::class, 'index'])->name('index');
         Route::get('/{note_id}', [NoteController::class, 'get'])->name('get');

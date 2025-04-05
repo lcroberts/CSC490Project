@@ -4,28 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ExceptionHelper;
 use App\Models\ImageDescription;
-use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Log;
 
 class ImageDescriptionController extends Controller
 {
     public function sendImage(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'image' => 'required|file|image',
             'forceGeneration' => 'nullable|boolean',
         ]);
 
         try {
-            $image = $request -> input('image');
-            $forceGeneration = $request->input("forceGeneration", false);
+            /** @var UploadedFile $image */
+            $image = $validated['image'];
+            $forceGeneration = $validated['forceGeneration'] ?? true;
 
-            $description = ImageDescription::generateImageDescription(file_get_contents($image), $forceGeneration);
-        } catch(Exception $err) {
-            return ExceptionHelper::handleError($err);
+            $description = ImageDescription::generateImageDescription($image->getContent(), $forceGeneration); // before this the return works, after this is includes all the data in the request
+
+            Log::debug($description);
+        } catch (Exception $err) {
+            return ExceptionHelper::handleException($err);
         }
 
-
-        return response()->json($description);
+        return response()->json(['summary' => 'success']);
     }
 }

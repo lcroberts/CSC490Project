@@ -6,7 +6,6 @@ use App\Helpers\ExceptionHelper;
 use App\Models\Summary;
 use Exception;
 use Illuminate\Http\Request;
-use function Webmozart\Assert\Tests\StaticAnalysis\string;
 
 class SummaryController extends Controller
 {
@@ -17,7 +16,6 @@ class SummaryController extends Controller
             'forceGeneration' => 'nullable|boolean',
         ]);
 
-         
         try {
             $noteContent = $request->input('noteContent');
             $forceGeneration = $request->input('forceGeneration', false);

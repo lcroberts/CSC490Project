@@ -19,6 +19,7 @@ const MediaUploadButton = () => {
       if (!finalFile) {
         return;
       }
+
       const editor = getInstance();
       const ctx = editor.ctx;
       const view = ctx.get(editorViewCtx);
@@ -26,7 +27,6 @@ const MediaUploadButton = () => {
       const { tr, selection } = state;
 
       const src = finalFile.name;
-      const alt = finalFile.name;
       // TODO: Use sumamries to get alt text
 
       const formData = new FormData();
@@ -39,24 +39,30 @@ const MediaUploadButton = () => {
         const fileData = await encryptBuffer(buffer, key);
         formData.append("body", fileData);
         http.post("/api/media/create", formData).then((res) => {
-          setTimeout(() => {
+          setTimeout(async () => {
             if (isVideo(finalFile.type)) {
+              const alt = finalFile.name;
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
                 videoNode.type(ctx).create({ src: src, alt: alt }),
               ));
             } else if (isAudio(finalFile.type)) {
+              const alt = finalFile.name;
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
                 audioNode.type(ctx).create({ src: src, alt: alt }),
               ));
             } else {
+              const data = new FormData();
+              data.append("image", finalFile);
+              const res = await http.post('/api/description/send', data);
+              console.log(res.data);
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
-                customImageNode.type(ctx).create({ src: src, alt: alt }),
+                customImageNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
               ));
             }
           });
