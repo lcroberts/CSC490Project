@@ -86,7 +86,6 @@ const MediaUploadButton = () => {
               ));
             } else if (isAudio(finalFile.type)) {
               const alt = finalFile.name;
-              // TODO: Use sumamries to get alt text
               const res = await http.post('/api/transcription/send', data);
               dispatch(tr.replaceWith(
                 selection.from,
