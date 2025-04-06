@@ -5,6 +5,7 @@ import { useInstance } from "@milkdown/react";
 import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
+const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 
 /**
  * @param {{width: number, height: number}} dimensions
@@ -42,6 +43,7 @@ function calculateImageDimensions(dimensions) {
 }
 
 const MediaUploadButton = () => {
+  // TODO: Limit file upload size to 25MB
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
   const http = useAxios();
@@ -62,7 +64,6 @@ const MediaUploadButton = () => {
       const { tr, selection } = state;
 
       const src = finalFile.name;
-      // TODO: Use sumamries to get alt text
 
       const formData = new FormData();
       formData.append("name", finalFile.name);
@@ -77,6 +78,7 @@ const MediaUploadButton = () => {
           setTimeout(async () => {
             if (isVideo(finalFile.type)) {
               const alt = finalFile.name;
+              // TODO: Use sumamries to get alt text
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
@@ -84,10 +86,12 @@ const MediaUploadButton = () => {
               ));
             } else if (isAudio(finalFile.type)) {
               const alt = finalFile.name;
+              // TODO: Use sumamries to get alt text
+              const res = await http.post('/api/transcription/send', data);
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
-                audioNode.type(ctx).create({ src: src, alt: alt }),
+                audioNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
               ));
             } else {
               const data = new FormData();

@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\ImageDescriptionController;
+use App\Http\Controllers\MediaSummaryController;
 use App\Http\Controllers\NoteController;
-use App\Http\Controllers\SummaryController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,10 +30,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::group(['prefix' => 'summary', 'as' => 'summary.'], function () {
-        Route::post('/send', [SummaryController::class, 'sendText'])->name('send');
+        Route::post('/send', [MediaSummaryController::class, 'sendText'])->name('send');
     });
 
     Route::group(['prefix' => 'description', 'as' => 'description.'], function () {
-        Route::post('/send', [ImageDescriptionController::class, 'sendImage'])->name('send');
+        Route::post('/send', [MediaSummaryController::class, 'sendImage'])->name('send');
+    });
+
+    Route::group(['prefix' => 'transcription', 'as' => 'transcription.'], function () {
+        Route::post('/send', [MediaSummaryController::class, 'sendAudio'])->name('send');
     });
 });
