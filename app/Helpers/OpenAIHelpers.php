@@ -75,8 +75,6 @@ class OpenAIHelpers
             ),
         ]);
 
-        print_r($user);
-
         $content = json_encode(array(
             'model' => env('OPENAI_MODEL'),
             'messages' => array(

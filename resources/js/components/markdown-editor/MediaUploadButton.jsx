@@ -93,7 +93,6 @@ const MediaUploadButton = () => {
               const data = new FormData();
               data.append("image", finalFile);
               const res = await http.post('/api/description/send', data);
-              console.log(res.data);
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
@@ -118,7 +117,6 @@ const MediaUploadButton = () => {
         const imageData = await createImageBitmap(file);
         const image = new Image();
         const { width, height } = calculateImageDimensions({ width: imageData.width, height: imageData.height })
-        console.log(width, height)
         image.src = URL.createObjectURL(file);
         image.onload = () => {
           const canvas = document.createElement('canvas');
