@@ -6,6 +6,41 @@ import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
 
+/**
+ * @param {{width: number, height: number}} dimensions
+ * @returns {{width: number, height: number}}
+ */
+function calculateImageDimensions(dimensions) {
+  const API_MAX_LONG_SIDE_LENGTH = 2000;
+  const API_MAX_SHORT_SIDE_LENGTH = 768;
+  const { width, height } = dimensions;
+
+  // Calculate ratio of the long/short dimensions to the max available ones
+  let longDimension;
+  let shortDimension;
+  if (width > height) {
+    longDimension = width;
+    shortDimension = height;
+  } else {
+    longDimension = height;
+    shortDimension = width;
+  }
+  const longRatio = longDimension / API_MAX_LONG_SIDE_LENGTH;
+  const shortRatio = shortDimension / API_MAX_SHORT_SIDE_LENGTH;
+  if (longRatio <= 1 && shortRatio <= 1) {
+    // Both dimensions are within the bounds so just return the image dimensions
+    return dimensions;
+  }
+
+  // Calculate which side is over by more to scale down both sides by the appropriate amount to maintain the aspect ratio
+  const maxRatio = Math.max(longRatio, shortRatio);
+
+  return {
+    width: Math.floor(width / maxRatio),
+    height: Math.floor(height / maxRatio)
+  }
+}
+
 const MediaUploadButton = () => {
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
@@ -82,14 +117,14 @@ const MediaUploadButton = () => {
         // Convert image to webp
         const imageData = await createImageBitmap(file);
         const image = new Image();
-        image.width = imageData.width;
-        image.height = imageData.height;
-        image.src = URL.createObjectURL(file);;
+        const { width, height } = calculateImageDimensions({ width: imageData.width, height: imageData.height })
+        console.log(width, height)
+        image.src = URL.createObjectURL(file);
         image.onload = () => {
           const canvas = document.createElement('canvas');
-          canvas.width = image.width;
-          canvas.height = image.height;
-          canvas.getContext('2d').drawImage(image, 0, 0);
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(image, 0, 0, width, height);
           canvas.toBlob((blob) => {
             const { base } = splitToBaseAndExtension(file.name);
             const myImage = new File([blob], base + '.webp', { type: blob.type });

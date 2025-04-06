@@ -21,15 +21,13 @@ class ImageDescriptionController extends Controller
         try {
             /** @var UploadedFile $image */
             $image = $validated['image'];
-            $forceGeneration = $validated['forceGeneration'] ?? true;
+            $forceGeneration = $validated['forceGeneration'] ?? true; // TODO: Switch this back to false once the summary issue is resolved
 
             $description = ImageDescription::generateImageDescription($image->getContent(), $forceGeneration); // before this the return works, after this is includes all the data in the request
-
-            Log::debug($description);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
 
-        return response()->json(['summary' => 'success']);
+        return response()->json(['summary' => $description]);
     }
 }
