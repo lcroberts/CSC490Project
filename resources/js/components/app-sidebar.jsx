@@ -18,6 +18,9 @@ import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
 import useAxios from "@/hooks/useAxios";
 import { encryptString, getEncryptionKey } from "@/lib/utils";
+import Modal from "./Modal";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
 export function AppSidebar({ children, ...props }) {
@@ -31,6 +34,8 @@ export function AppSidebar({ children, ...props }) {
   }
   const { notes, setNotes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
+  const [modalInput, setModalInput] = React.useState("");
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const filteredNotes = notes.filter(note =>
     note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -78,18 +83,7 @@ export function AppSidebar({ children, ...props }) {
                       hidden: false,
                     }}
                     onClick={() => {
-                      http.post('/api/notes/create', {
-                        name: "New Note",
-                      }).then(res => {
-                        const id = res.data.id;
-                        http.get(`/api/notes/${id}`).then((res) => {
-                          let newNotes = structuredClone(notes);
-                          newNotes.unshift(res.data);
-                          setNotes(newNotes);
-                        });
-                      }).catch(err => {
-                        console.log(err)
-                      });
+                      setModalOpen(true);
                     }}
                     className="px-2.5 md:px-2"
                   >
@@ -109,7 +103,7 @@ export function AppSidebar({ children, ...props }) {
                       http.put('/api/notes/save', {
                         id: activeNoteInfo.id,
                         body: data,
-                      }).then((res) => {})
+                      }).then((res) => { })
                     }}
                     className="px-2.5 md:px-2"
                   >
@@ -193,6 +187,28 @@ export function AppSidebar({ children, ...props }) {
       <div className="flex-1 overflow-auto">
         {children}
       </div>
+      <Modal show={modalOpen} onClose={() => setModalOpen(false)}>
+        <h1 className="font-bold text-4xl text-center mb-3">New Note</h1>
+        <div className="flex mx-3 mb-3 gap-2">
+          <Input placeholder="Title" value={modalInput} onChange={e => setModalInput(e.target.value)}></Input>
+          <Button disabled={modalInput.trim() === ""} onClick={() => {
+            http.post('/api/notes/create', {
+              name: modalInput,
+            }).then(res => {
+              const id = res.data.id;
+              http.get(`/api/notes/${id}`).then((res) => {
+                let newNotes = structuredClone(notes);
+                newNotes.unshift(res.data);
+                setNotes(newNotes);
+              });
+            }).catch(err => {
+              console.log(err)
+            });
+            setModalOpen(false);
+            setModalInput("");
+          }}>Create Note</Button>
+        </div>
+      </Modal>
     </Sidebar>
   );
 }
