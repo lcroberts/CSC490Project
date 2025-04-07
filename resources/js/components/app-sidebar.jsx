@@ -31,31 +31,11 @@ const data = {
       isActive: true,
     },
     {
-      title: "New Note",
-      onclick: (event, http) => {
-        http.post('/api/notes/create', {
-          name: "New Note",
-        }).then(res => {
-          console.log(res.data);
-        }).catch(err => {
-          console.log(err)
-        });
-      },
-      icon: File,
-      isActive: false,
-    },
-    {
       title: "Summarize",
       onclick: (event, http) => { },
       icon: Send,
       isActive: false,
     },
-    // {
-    //   title: "Junk",
-    //   onclick: (event, http) => {},
-    //   icon: ArchiveX,
-    //   isActive: false,
-    // },
     {
       title: "Delete",
       onclick: (http, event) => { },
@@ -69,7 +49,6 @@ const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA
 export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
-  const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
   const [activeNoteIndex, setActiveNoteIndex] = React.useState(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
@@ -119,22 +98,29 @@ export function AppSidebar({ children, ...props }) {
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
-                {data.navMain.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      tooltip={{
-                        children: item.title,
-                        hidden: false,
-                      }}
-                      onClick={e => item.onclick(e, http)}
-                      isActive={activeItem.title === item.title}
-                      className="px-2.5 md:px-2"
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                {/* TODO: Inline things */}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={{
+                      children: "New Note",
+                      hidden: false,
+                    }}
+                    onClick={() => {
+                      http.post('/api/notes/create', {
+                        name: "New Note",
+                      }).then(res => {
+                        console.log(res.data);
+                        // TODO: Fetch note and add it to list
+                      }).catch(err => {
+                        console.log(err)
+                      });
+                    }}
+                    className="px-2.5 md:px-2"
+                  >
+                    <File />
+                    <span>New Note</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -149,7 +135,7 @@ export function AppSidebar({ children, ...props }) {
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-base font-medium text-foreground">
-              {activeItem.title}
+              Notes
             </div>
           </div>
           <SidebarInput
