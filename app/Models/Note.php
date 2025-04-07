@@ -117,7 +117,7 @@ class Note
 
         $sql = "
             SELECT * FROM notes
-            WHERE user_id = :user
+            WHERE user_id = :user_id
                 AND id = :id;
         ";
 
@@ -147,7 +147,7 @@ class Note
 
         $sql = "
             DELETE FROM notes
-            WHERE user_id = :user
+            WHERE user_id = :user_id
                 AND id = :id;
         ";
 

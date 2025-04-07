@@ -56,7 +56,7 @@ export function AppSidebar({ children, ...props }) {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
-  const { notes, setActiveNote } = useAppState();
+  const { notes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
 
   const filteredNotes = notes.filter(note =>
@@ -119,6 +119,25 @@ export function AppSidebar({ children, ...props }) {
                   >
                     <File />
                     <span>New Note</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={{
+                      children: "Delete",
+                      hidden: false,
+                    }}
+                    onClick={() => {
+                      console.log(activeNoteInfo);
+                      http.delete(`/api/notes/${activeNoteInfo.id}/delete`).then((res) => {
+                        console.log(res);
+                        // TODO: Remove note from list
+                      })
+                    }}
+                    className="px-2.5 md:px-2"
+                  >
+                    <Trash2 />
+                    <span>Delete</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

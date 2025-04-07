@@ -1,8 +1,9 @@
 import AppContext from "@/context/AppContext";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 /**
  * @typedef {Object} Note
+ * @property {number} id
  * @property {string} content - note content
  * @property {string} name - note title
  * @property {string} created_at - date note was created at
@@ -14,10 +15,13 @@ import { useContext } from "react";
  * notes: Note[]
  * activeNote: ?Number
  * setActiveNote: Function
+ * activeNoteInfo: Note
  * }}
  */
 export default function useAppState() {
   const state = useContext(AppContext);
-
-  return state;
+  const activeNoteInfo = useMemo(() => {
+    return state.notes[state.activeNote];
+  }, [state.activeNote]);
+  return {...state, activeNoteInfo};
 }

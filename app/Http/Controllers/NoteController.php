@@ -71,7 +71,7 @@ class NoteController extends Controller
     public function delete(Request $request, int $note_id)
     {
         try {
-            Note::remove($request->input($note_id));
+            Note::remove($note_id);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
