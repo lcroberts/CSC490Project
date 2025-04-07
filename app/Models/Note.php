@@ -16,6 +16,7 @@ class Note
     public int $id;
     public string $name;
     public string $content;
+    public string $created_at;
 
     private static function asObjectArray(array &$results): array
     {
@@ -192,7 +193,7 @@ class Note
         }
     }
 
-    public static function getNotesList(): array
+    public static function getNotesList(?string $disk_root = null): array
     {
         if (!Auth::check())
             throw new UnauthorizedException("User must be authenticated to get their list of notes.");
@@ -218,6 +219,11 @@ class Note
         }
 
         $objs = static::asObjectArray($res);
+        $disk = StorageHelpers::getS3Disk($disk_root);
+        foreach ($objs as $obj) {
+            $obj->content = $disk->get(Auth::id() . "/notes/" . $obj->name . "_" . $obj->id);
+        }
+
         return $objs;
     }
 
