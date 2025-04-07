@@ -43,14 +43,13 @@ const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA
 export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
-  const [activeNoteIndex, setActiveNoteIndex] = React.useState(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
   const user = {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
-  const { notes, setNotes, setActiveNote, activeNoteInfo } = useAppState();
+  const { notes, setNotes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
 
   const filteredNotes = notes.filter(note =>
@@ -129,6 +128,7 @@ export function AppSidebar({ children, ...props }) {
                       const id = activeNoteInfo.id;
                       http.delete(`/api/notes/${id}/delete`).then((res) => {
                         setNotes(notes.filter(note => note.id !== id));
+                        setActiveNote(null);
                       })
                     }}
                     className="px-2.5 md:px-2"
@@ -166,9 +166,8 @@ export function AppSidebar({ children, ...props }) {
               {filteredNotes.map((note, idx) => (
                 <div
                   key={idx}
-                  className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNoteIndex === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
+                  className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNote === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
                   onClick={() => {
-                    setActiveNoteIndex(idx);
                     setActiveNote(idx);
                   }}
                 >
