@@ -59,7 +59,6 @@ class NoteController extends Controller
             'body' => 'nullable',
         ]);
 
-        Log::debug($validated);
         try {
             Note::alter($validated['id'], $validated['body'] ?? "");
         } catch (Exception $err) {
