@@ -6,6 +6,7 @@ use App\Helpers\ExceptionHelper;
 use App\Models\Note;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class NoteController extends Controller
 {
@@ -37,18 +38,18 @@ class NoteController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'body' => 'required',
+        $validated = $request->validate([
+            'name' => 'required',
+            'body' => 'nullable',
         ]);
 
         try {
-            Note::save($request->input('name'), $request->input('body'));
+            $id = Note::save($validated['name'], $validated['body'] ?? "");
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
 
-        return response()->json(['action' => 'store'], 200);
+        return response()->json(['id' => $id], 200);
     }
 
     public function alter(Request $request)

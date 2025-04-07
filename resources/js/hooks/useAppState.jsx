@@ -4,8 +4,8 @@ import { useContext } from "react";
 /**
  * @typedef {Object} Note
  * @property {string} content - note content
- * @property {string} title - note title
- * @property {string} createdAt - date note was created at
+ * @property {string} name - note title
+ * @property {string} created_at - date note was created at
  */
 
 /**

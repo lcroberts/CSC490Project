@@ -19,37 +19,46 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
+import useAxios from "@/hooks/useAxios";
 
 // This is sample data until we use the database
 const data = {
   navMain: [
     {
       title: "Notes",
-      url: "#",
+      onclick: () => { },
       icon: Inbox,
       isActive: true,
     },
     {
       title: "New Note",
-      url: "#",
+      onclick: (event, http) => {
+        http.post('/api/notes/create', {
+          name: "New Note",
+        }).then(res => {
+          console.log(res.data);
+        }).catch(err => {
+          console.log(err)
+        });
+      },
       icon: File,
       isActive: false,
     },
     {
       title: "Summarize",
-      url: "#",
+      onclick: (event, http) => { },
       icon: Send,
       isActive: false,
     },
-    {
-      title: "Junk",
-      url: "#",
-      icon: ArchiveX,
-      isActive: false,
-    },
+    // {
+    //   title: "Junk",
+    //   onclick: (event, http) => {},
+    //   icon: ArchiveX,
+    //   isActive: false,
+    // },
     {
       title: "Delete",
-      url: "#",
+      onclick: (http, event) => { },
       icon: Trash2,
       isActive: false,
     },
@@ -69,9 +78,10 @@ export function AppSidebar({ children, ...props }) {
     avatar: avatar,
   }
   const { notes, setActiveNote } = useAppState();
+  const http = useAxios();
 
   const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -116,10 +126,7 @@ export function AppSidebar({ children, ...props }) {
                         children: item.title,
                         hidden: false,
                       }}
-                      onClick={() => {
-                        setActiveItem(item);
-                        setOpen(true);
-                      }}
+                      onClick={e => item.onclick(e, http)}
                       isActive={activeItem.title === item.title}
                       className="px-2.5 md:px-2"
                     >
@@ -165,9 +172,9 @@ export function AppSidebar({ children, ...props }) {
                 >
                   <div className="flex w-full items-center gap-2">
                     <span>{user?.name}</span>{" "}
-                    <span className="ml-auto text-xs">{note.createdAt}</span>
+                    <span className="ml-auto text-xs">{(new Date(note.created_at + " UTC")).toLocaleString()}</span>
                   </div>
-                  <span className="font-medium">{note.title}</span>
+                  <span className="font-medium">{note.name}</span>
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
                     {note.content}
                   </span>
