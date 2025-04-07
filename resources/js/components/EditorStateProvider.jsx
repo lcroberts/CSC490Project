@@ -17,6 +17,7 @@ export default function EditorStateProvider({ children }) {
   const [activeNote, setActiveNote] = useState(null);
   let val = {
     notes: notes || [],
+    setNotes: setNotes,
     activeNote: activeNote,
     setActiveNote: setActiveNote,
   };

@@ -203,7 +203,8 @@ class Note
         ];
         $sql = "
             SELECT * FROM notes
-            WHERE user_id = :user;
+            WHERE user_id = :user
+            ORDER BY created_at desc;
         ";
 
         try {

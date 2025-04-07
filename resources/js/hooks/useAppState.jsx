@@ -13,6 +13,7 @@ import { useContext, useMemo } from "react";
  * Wraps AppContext so that we can use this to get type hinting via jsdoc
  * @returns {{
  * notes: Note[]
+ * setNotes: Function
  * activeNote: ?Number
  * setActiveNote: Function
  * activeNoteInfo: Note

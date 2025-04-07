@@ -36,12 +36,6 @@ const data = {
       icon: Send,
       isActive: false,
     },
-    {
-      title: "Delete",
-      onclick: (http, event) => { },
-      icon: Trash2,
-      isActive: false,
-    },
   ],
 };
 
@@ -56,7 +50,7 @@ export function AppSidebar({ children, ...props }) {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
-  const { notes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
+  const { notes, setNotes, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
 
   const filteredNotes = notes.filter(note =>
@@ -109,8 +103,12 @@ export function AppSidebar({ children, ...props }) {
                       http.post('/api/notes/create', {
                         name: "New Note",
                       }).then(res => {
-                        console.log(res.data);
-                        // TODO: Fetch note and add it to list
+                        const id = res.data.id;
+                        http.get(`/api/notes/${id}`).then((res) => {
+                          let newNotes = structuredClone(notes);
+                          newNotes.unshift(res.data);
+                          setNotes(newNotes);
+                        });
                       }).catch(err => {
                         console.log(err)
                       });
@@ -128,10 +126,9 @@ export function AppSidebar({ children, ...props }) {
                       hidden: false,
                     }}
                     onClick={() => {
-                      console.log(activeNoteInfo);
-                      http.delete(`/api/notes/${activeNoteInfo.id}/delete`).then((res) => {
-                        console.log(res);
-                        // TODO: Remove note from list
+                      const id = activeNoteInfo.id;
+                      http.delete(`/api/notes/${id}/delete`).then((res) => {
+                        setNotes(notes.filter(note => note.id !== id));
                       })
                     }}
                     className="px-2.5 md:px-2"
