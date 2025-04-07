@@ -21,28 +21,44 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription, D
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { TypeAnimation } from 'react-type-animation';
+import useAxios from "@/hooks/useAxios";
 
 export default function Dashboard() {
   const user = usePage().props.auth.user; // Get the user from the page props
+  const http = useAxios();
   const { notes, activeNote } = useAppState(); // Get the notes and active note from the app state
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for the dialog
   const [isLoading, setIsLoading] = useState(false); // State for loading state
+  const [summary, setSummary] = useState("");
   const [progress, setProgress] = useState(0);  // State for progress
 
-  const handleDialogOpen = () => { // Function to handle dialog open
+  const handleDialogOpen = async () => {
     setIsLoading(true);
     setIsDialogOpen(true);
     setProgress(0);
-    const timer = setInterval(() => {
-      setProgress((prev) => { // Controls the progress of the loading bar
-        if (prev >= 100) {
-          clearInterval(timer);
-          setIsLoading(false);
-          return 100;
-        }
-        return prev + 3;
+
+    try {
+      if (!notes[activeNote]?.content) {
+        throw new Error('No content available to summarize.');
+      }
+
+      const response = await http.post('/api/summary/send', {
+        noteContent: notes[activeNote]?.content,
+        forceGeneration: false,
       });
-    }, 100); // Update progress every 100ms
+
+      setSummary(response.data.summary || 'No summary available.');
+    } catch (error) {
+      console.error('Error fetching summary:', error);
+      if (error.response && error.response.status === 422) {
+        setSummary('Invalid content. Please provide valid text to summarize.');
+      } else {
+        setSummary('Failed to fetch summary. Please try again later.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+
   };
 
   return (
@@ -98,9 +114,7 @@ export default function Dashboard() {
                   </DialogDescription>
                   <div className="flex min-h-[80px] w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
                     <TypeAnimation
-                      sequence={[
-                        `North Carolina offers excellent fishing opportunities in both freshwater and saltwater. Popular freshwater spots include **Lake Norman**, **Jordan Lake**, **Fontana Lake**, **High Rock Lake**, and **Mayo River**, known for bass, catfish, trout, and crappie. For saltwater fishing, top locations like the **Outer Banks**, **Cape Lookout**, **Morehead City**, **Wilmington**, and **Hatteras Island** provide access to species such as red drum, flounder, tuna, and sailfish, with options for surf, inshore, and deep-sea fishing.`,
-                      ]}
+                      sequence={[ summary, ]}
                       wrapper="div"
                       cursor={true}
                       speed={85}
