@@ -54,13 +54,14 @@ class NoteController extends Controller
 
     public function alter(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'id' => 'required|integer',
-            'body' => 'required',
+            'body' => 'nullable',
         ]);
 
+        Log::debug($validated);
         try {
-            Note::alter($request->input('id'), $request->input('body'));
+            Note::alter($validated['id'], $validated['body'] ?? "");
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }

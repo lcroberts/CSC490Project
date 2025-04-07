@@ -14,6 +14,7 @@ import { $view } from '@milkdown/kit/utils';
 import MediaUploadButton from './MediaUploadButton';
 import MediaDisplayComponent from './MediaDisplayComponent';
 import GetSetMarkdownPlugin from './SetMarkdownPlugin';
+import useAppState from '@/hooks/useAppState';
 
 const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
   const pluginViewFactory = usePluginViewFactory();
@@ -34,7 +35,7 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       audioNode,
       videoNode,
       customImageNode,
-      slash,
+      // slash,
       remarkDirective,
       mediaNode,
       mediaInputRule,
@@ -60,13 +61,13 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       component: MediaDisplayComponent,
     })));
 
-    crepe.editor.config((ctx) => {
-      ctx.set(slash.key, {
-        view: pluginViewFactory({
-          component: SlashView,
-        })
-      })
-    });
+    // crepe.editor.config((ctx) => {
+    //   ctx.set(slash.key, {
+    //     view: pluginViewFactory({
+    //       component: SlashView,
+    //     })
+    //   })
+    // });
     return crepe;
   });
 
@@ -75,15 +76,24 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
 
 /**
  * @param {string} defaultContent - Default editor content
- * @param {?Function} setMarkdown - A function that takes the markdown value of the string and is ran on an editor change
  * @returns {JSX.Element}
  * @constructor
  */
-export const MarkdownEditor = ({ defaultContent = "", setMarkdown = null }) => {
+export const MarkdownEditor = ({ defaultContent = "" }) => {
+  const {notes, setNotes, activeNoteInfo} = useAppState();
+  const updateMarkdown = (markdown) => {
+    setNotes(notes.map((note) => {
+      if (note.id !== activeNoteInfo.id) {
+        return note;
+      } else {
+        return {...note, content: markdown}
+      }
+    }))
+  }
   return (
     <MilkdownProvider>
       <ProsemirrorAdapterProvider>
-        <MilkdownEditor defaultContent={defaultContent} setMarkdown={setMarkdown} />
+        <MilkdownEditor defaultContent={defaultContent} setMarkdown={updateMarkdown} />
       </ProsemirrorAdapterProvider>
     </MilkdownProvider>
   );

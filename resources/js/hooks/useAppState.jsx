@@ -21,8 +21,6 @@ import { useContext, useMemo } from "react";
  */
 export default function useAppState() {
   const state = useContext(AppContext);
-  const activeNoteInfo = useMemo(() => {
-    return state.notes[state.activeNote];
-  }, [state.activeNote]);
-  return {...state, activeNoteInfo};
+  const activeNoteInfo = state.notes[state.activeNote];
+  return { ...state, activeNoteInfo };
 }

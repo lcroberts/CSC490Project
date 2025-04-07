@@ -1,5 +1,6 @@
 import AppContext from "@/context/AppContext";
 import useAxios from "@/hooks/useAxios";
+import { decryptString, getEncryptionKey } from "@/lib/utils";
 import { useState } from "react";
 
 /**
@@ -11,7 +12,14 @@ export default function EditorStateProvider({ children }) {
   const http = useAxios();
   useState(() => {
     http.get('/api/notes').then(async (res) => {
-      setNotes(res.data);
+      let notes = res.data;
+      const key = await getEncryptionKey();
+      for (let i = 0; i < notes.length; i++) {
+        if (notes[i].content && notes[i].content.trim() !== "") {
+          notes[i].content = await decryptString(notes[i].content, key);
+        }
+      }
+      setNotes(notes);
     })
   }, []);
   const [activeNote, setActiveNote] = useState(null);
