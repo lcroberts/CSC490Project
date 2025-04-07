@@ -10,10 +10,10 @@ class AudioTranscript
 {
     public static function generateAudioTranscript($audio, bool $force_generation = false): string
     {
-         /* $hash = hash('sha256', file_get_contents($audio));
+          $hash = hash('sha256', file_get_contents($audio));
           if ((! $force_generation) && (Cache::has($hash))) {
               return Cache::get($hash);
-          }*/
+          }
 
 
         $response = OpenAIHelpers::submitTranscription($audio);
@@ -26,8 +26,8 @@ class AudioTranscript
 
         $transcript = $json->text;
 
-        /*$duration = new DateInterval ('P1W');
-        Cache::add($hash, $transcript, $duration);*/
+        $duration = new DateInterval ('P1W');
+        Cache::add($hash, $transcript, $duration);
 
         return $transcript;
     }

@@ -53,7 +53,7 @@ class MediaSummaryController extends Controller
     public function sendAudio(Request $request)
     {
         $validated = $request->validate([
-            'audio' => 'required|file|image',
+            'audio' => 'required|file',
             'forceGeneration' => 'nullable|boolean',
         ]);
 
@@ -67,6 +67,6 @@ class MediaSummaryController extends Controller
             return ExceptionHelper::handleException($err);
         }
 
-        return response()->json(['summary' => null]);
+        return response()->json(['summary' => $transcript]);
     }
 }
