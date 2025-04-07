@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ExceptionHelper;
+use App\Models\AudioTranscript;
 use App\Models\ImageDescription;
 use App\Models\Summary;
 use Exception;
@@ -60,6 +61,8 @@ class MediaSummaryController extends Controller
             /** @var UploadedFile $audio */
             $audio = $validated['audio'];
             $forceGeneration = $validated['forceGeneration'] ?? false;
+
+            $transcript = AudioTranscript::generateAudioTranscript($audio, $forceGeneration);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
