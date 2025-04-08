@@ -5,6 +5,7 @@ import { useInstance } from "@milkdown/react";
 import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
+import useAppState from "@/hooks/useAppState";
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 
 /**
@@ -47,6 +48,7 @@ const MediaUploadButton = () => {
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
   const http = useAxios();
+  const {activeNoteInfo} = useAppState();
 
   /** @type {[?File, Function]} */
   const [finalFile, setFinalFile] = useState(null);
@@ -67,7 +69,7 @@ const MediaUploadButton = () => {
 
       const formData = new FormData();
       formData.append("name", finalFile.name);
-      formData.append("note_id", 1); // TODO: Use appropriate note_id
+      formData.append("note_id", activeNoteInfo.id);
       const reader = new FileReader();
       reader.onload = async (event) => {
         const buffer = new Uint8Array(event.target.result);
@@ -86,6 +88,8 @@ const MediaUploadButton = () => {
               ));
             } else if (isAudio(finalFile.type)) {
               const alt = finalFile.name;
+              const data = new FormData();
+              data.append("audio", finalFile);
               const res = await http.post('/api/transcription/send', data);
               dispatch(tr.replaceWith(
                 selection.from,
