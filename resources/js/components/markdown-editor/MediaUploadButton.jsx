@@ -8,15 +8,15 @@ import { audioNode, customImageNode, videoNode } from "./CustomNodes";
 import useAppState from "@/hooks/useAppState";
 import { Input } from "../ui/input";
 import Spinner from "../ui/spinner";
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
+const MAX_FILE_SIZE = 20 * 1000 * 1000; // 20MB
 
 /**
  * @param {{width: number, height: number}} dimensions
  * @returns {{width: number, height: number}}
  */
 function calculateImageDimensions(dimensions) {
-  const API_MAX_LONG_SIDE_LENGTH = 2000;
-  const API_MAX_SHORT_SIDE_LENGTH = 768;
+  const API_MAX_LONG_SIDE_LENGTH = 1333;
+  const API_MAX_SHORT_SIDE_LENGTH = 512;
   const { width, height } = dimensions;
 
   // Calculate ratio of the long/short dimensions to the max available ones
@@ -91,21 +91,35 @@ const MediaUploadButton = () => {
             } else if (isAudio(finalFile.type)) {
               const data = new FormData();
               data.append("audio", finalFile);
-              const res = await http.post('/api/transcription/send', data);
-              dispatch(tr.replaceWith(
-                selection.from,
-                selection.to,
-                audioNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
-              ));
+              try {
+                const res = await http.post('/api/transcription/send', data);
+                dispatch(tr.replaceWith(
+                  selection.from,
+                  selection.to,
+                  audioNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
+                ));
+              } catch (e) {
+                setStatus("error");
+                setErrorMsg("There was an error processing your file. Please try again later.");
+                setFinalFile(null);
+                throw e;
+              }
             } else {
               const data = new FormData();
               data.append("image", finalFile);
-              const res = await http.post('/api/description/send', data);
-              dispatch(tr.replaceWith(
-                selection.from,
-                selection.to,
-                customImageNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
-              ));
+              try {
+                const res = await http.post('/api/description/send', data);
+                dispatch(tr.replaceWith(
+                  selection.from,
+                  selection.to,
+                  customImageNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
+                ));
+              } catch (e) {
+                setStatus("error");
+                setErrorMsg("There was an error processing your file. Please try again later.");
+                setFinalFile(null);
+                throw e;
+              }
             }
           });
         });
@@ -122,7 +136,7 @@ const MediaUploadButton = () => {
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
         setStatus("error");
-        setErrorMsg("The selected file exceeds the maximum size of 25MiB");
+        setErrorMsg("The selected file exceeds the maximum size of 20MB");
         return;
       }
       if (isImage(file.type)) {
