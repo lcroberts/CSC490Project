@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
 import useAppState from "@/hooks/useAppState";
 import { Input } from "../ui/input";
+import Spinner from "../ui/spinner";
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 
 /**
@@ -45,7 +46,6 @@ function calculateImageDimensions(dimensions) {
 }
 
 const MediaUploadButton = () => {
-  // TODO: Limit file upload size to 25MB
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
   const [status, setStatus] = useState("pending");
@@ -145,6 +145,8 @@ const MediaUploadButton = () => {
       } else {
         setFinalFile(file);
       }
+      setStatus("processing");
+      setErrorMsg(""); // Clear error message if set
     }
   }
 
@@ -163,6 +165,12 @@ const MediaUploadButton = () => {
             <div className="text-red-600 font-bold text-sm">{errorMsg}</div>
           }
         </>
+      }
+      {status === "processing" &&
+        <div className="flex gap-4 items-center">
+          <Spinner className={"w-8 h-8"} />
+          <span className="text-lg">Processing File</span>
+        </div>
       }
     </>
   )
