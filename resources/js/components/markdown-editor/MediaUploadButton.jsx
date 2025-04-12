@@ -6,6 +6,7 @@ import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
 import useAppState from "@/hooks/useAppState";
+import { Input } from "../ui/input";
 const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
 
 /**
@@ -47,8 +48,10 @@ const MediaUploadButton = () => {
   // TODO: Limit file upload size to 25MB
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
+  const [status, setStatus] = useState("pending");
+  const [errorMsg, setErrorMsg] = useState(null);
   const http = useAxios();
-  const {activeNoteInfo} = useAppState();
+  const { activeNoteInfo } = useAppState();
 
   /** @type {[?File, Function]} */
   const [finalFile, setFinalFile] = useState(null);
@@ -80,14 +83,12 @@ const MediaUploadButton = () => {
           setTimeout(async () => {
             if (isVideo(finalFile.type)) {
               const alt = finalFile.name;
-              // TODO: Use sumamries to get alt text
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
                 videoNode.type(ctx).create({ src: src, alt: alt }),
               ));
             } else if (isAudio(finalFile.type)) {
-              const alt = finalFile.name;
               const data = new FormData();
               data.append("audio", finalFile);
               const res = await http.post('/api/transcription/send', data);
@@ -119,6 +120,11 @@ const MediaUploadButton = () => {
     /** @type {File|null} */
     let file = e.target.files[0] || undefined;
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setStatus("error");
+        setErrorMsg("The selected file exceeds the maximum size of 25MiB");
+        return;
+      }
       if (isImage(file.type)) {
         // Convert image to webp
         const imageData = await createImageBitmap(file);
@@ -143,13 +149,22 @@ const MediaUploadButton = () => {
   }
 
   return (
-    <input
-      onChange={onChange}
-      type="file"
-      className="media-upload w-full text-slate-500 font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-white rounded"
-      accept="image/*, video/*, audio/*"
-      ref={contentRef}
-    />
+    <>
+      {(status === "pending" || status === "error") &&
+        <>
+          <Input
+            onChange={onChange}
+            type="file"
+            accept="image/*, video/*, audio/*"
+            className={`media-upload w-full ${status === "error" ? "text-red-600" : "text-slate-600"} font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-black file:hover:bg-primary/90 file:text-white rounded-sm`}
+            ref={contentRef}
+          />
+          {status === "error" &&
+            <div className="text-red-600 font-bold text-sm">{errorMsg}</div>
+          }
+        </>
+      }
+    </>
   )
 }
 
