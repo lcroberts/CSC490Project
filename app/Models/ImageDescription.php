@@ -4,7 +4,9 @@ namespace App\Models;
 
 use App\Helpers\OpenAIHelpers;
 use DateInterval;
+use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use UnexpectedValueException;
 
 class ImageDescription
@@ -33,7 +35,11 @@ class ImageDescription
             throw new UnexpectedValueException('Empty JSON object was returned from API while generating excerpts.');
         }
 
-        $description = $json->choices[0]->message->content;
+        try {
+            $description = $json->choices[0]->message->content;
+        } catch (Exception $e) {
+            Log::error(__METHOD__ . ": OpenAI API Error:" . PHP_EOL . print_r($json, true));
+        }
 
         $duration = new DateInterval('P1W');
         Cache::add($hash, $description, $duration);
