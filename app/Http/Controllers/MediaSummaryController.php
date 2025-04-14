@@ -12,16 +12,20 @@ class MediaSummaryController extends Controller
 {
     public function sendText(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'noteContent' => 'required',
             'forceGeneration' => 'nullable|boolean',
+            'nParagraphs' => 'nullable|integer',
+            'includeVocabList' => 'nullable|boolean',
         ]);
 
         try {
-            $noteContent = $request->input('noteContent');
-            $forceGeneration = $request->input('forceGeneration', false);
+            $noteContent = $validated['noteContent'];
+            $forceGeneration = $validated['forceGeneration'] ?? false;
+            $nParagraphs = $validated['nParagraphs'] ?? 1;
+            $includeVocabList = $validated['includeVocabList'] ?? false;
 
-            $summary = Summary::generateTextSummary($noteContent, $forceGeneration);
+            $summary = Summary::generateTextSummary($noteContent, $forceGeneration, $nParagraphs, $includeVocabList);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
