@@ -2,7 +2,7 @@ import Navbar from '@/components/Navbar';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { TypeAnimation } from 'react-type-animation';
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import {
   HoverCard,
   HoverCardContent,
@@ -78,13 +78,13 @@ export default function TestWelcome() {
         </h1>
         <p className="text-3xl mb-8">StudyBuddy is the ultimate tool for organizing and accessing your study notes.</p>
         <Button className="bg-orange-400 text-white hover:bg-red-400 hover:shadow-lg hover:shadow-red-400/50 text-lg hover-animate-glow" size="lg">
-        <a href="/login?register=true">
-          Get Started
+          <a href="/login?register=true">
+            Get Started
           </a></Button>
       </div>
 
-      <motion.div 
-        id="markdown-editor" 
+      <motion.div
+        id="markdown-editor"
         className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]"
         initial={{ opacity: 0, y: 100 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -114,9 +114,9 @@ export default function TestWelcome() {
           <img src="./Photo.png" alt="Description of image" className="rounded-lg shadow-xl w-[1200px]" />
         </div>
       </motion.div>
-      
-      <motion.div 
-        id="encryption" 
+
+      <motion.div
+        id="encryption"
         className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]"
         initial={{ opacity: 0, y: 100 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -141,7 +141,7 @@ export default function TestWelcome() {
           </HoverCard>
           to handle all your media needs.
         </h2>
-        
+
         <div className="relative flex items-start">
           <div className="mt-4 w-full max-w-sm bg-white rounded-xl shadow-md overflow-hidden">
             <div className="bg-orange-400 text-white px-6 py-2">
@@ -198,25 +198,25 @@ export default function TestWelcome() {
                       speed={10}
                       className="px-3 py-1.5 w-full h-full block text-base bg-transparent"
                     />
-                  </div>  
+                  </div>
                 </div>
               </div>
-              
+
               <div className="mt-auto pt-4">
               </div>
             </div>
           </div>
-          
+
           <div className="mt-4 flex flex-col items-center mx-10">
             <div className="bg-white p-4 rounded-xl mt-20">
-              <img 
-                src="arrow-right-svgrepo-com.svg" 
+              <img
+                src="arrow-right-svgrepo-com.svg"
                 className="w-60 h-auto rounded-lg"
                 alt="Right arrow"
               />
             </div>
           </div>
-          
+
           <div className="mt-4 w-full max-w-sm bg-white rounded-xl shadow-md overflow-hidden h-[340px]">
             <div className="bg-orange-400 text-white px-6 py-2">
               <h3 className="text-2xl font-bold">Generated Key:</h3>
@@ -252,17 +252,17 @@ export default function TestWelcome() {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-4 flex flex-col items-center mx-10">
             <div className="bg-white p-4 rounded-xl mt-20">
-              <img 
-                src="arrow-right-svgrepo-com.svg" 
+              <img
+                src="arrow-right-svgrepo-com.svg"
                 className="w-60 h-auto rounded-lg"
                 alt="Right arrow"
               />
             </div>
           </div>
-          
+
           <div className="mt-4 w-full max-w-sm bg-white rounded-xl shadow-md overflow-hidden h-[340px]">
             <div className="bg-orange-400 text-white px-6 py-2">
               <h3 className="text-2xl font-bold">Server Access</h3>
@@ -299,8 +299,8 @@ export default function TestWelcome() {
         </div>
       </motion.div>
 
-      <motion.div 
-        id="summarization" 
+      <motion.div
+        id="summarization"
         className="flex flex-col items-start text-7xl font-bold mt-20 pt-10 ml-[250px]"
         initial={{ opacity: 0, y: 100 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -332,13 +332,13 @@ export default function TestWelcome() {
             </div>
             <div className="p-4 space-y-4">
               <div className="relative min-h-[300px]">
-                <textarea 
+                <textarea
                   className="w-full min-h-[300px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 bg-gray-50 no-scrollbar"
                   readOnly
                   defaultValue="Calculus is a branch of mathematics that focuses on change and motion, and it is divided into two main areas: differential and integral calculus. Differential calculus deals with the concept of the derivative, which measures how a quantity changes with respect to another—often time or space—making it essential for understanding rates of change and slopes of curves. Integral calculus, on the other hand, involves the accumulation of quantities and the area under curves, which is useful in calculating things like total distance traveled or the volume under a surface. Together, these concepts form the foundation for much of modern science and engineering, allowing us to model and solve problems in physics, economics, biology, and beyond."
                 ></textarea>
                 <div className="absolute bottom-4 right-4">
-                  <Button 
+                  <Button
                     className="bg-orange-400 text-white hover:bg-orange-500"
                     id="summarize-button"
                     onClick={() => { // Handle the onclick behavior for the summarize button and disable the button afterward
@@ -360,7 +360,7 @@ export default function TestWelcome() {
             </div>
             <div className="p-4">
               <div className="relative min-h-[300px]">
-                <textarea 
+                <textarea
                   className="w-full min-h-[300px] p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 bg-gray-50 no-scrollbar"
                   readOnly
                   defaultValue=""
@@ -405,7 +405,7 @@ export default function TestWelcome() {
           </HoverCard>
           feature that uses AI add tags to your notes.
         </h2>
-        
+
       </div>
 
       <div className="fixed top-1/2 left-0 transform -translate-y-1/2 text-center w-1/8 p-4">
