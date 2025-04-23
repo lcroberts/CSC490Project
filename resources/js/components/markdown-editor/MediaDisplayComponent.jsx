@@ -4,6 +4,7 @@ import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { Textarea } from "../ui/textarea";
+import Spinner from "../ui/spinner";
 
 const MediaDisplayComponent = () => {
   const { node, setAttrs } = useNodeViewContext();
@@ -66,8 +67,9 @@ const MediaDisplayComponent = () => {
           </Modal>
         </>
         :
-        <div>
-          Loading...
+        <div className="flex gap-4 items-center">
+          <Spinner className={"w-8 h-8"}/>
+          <span className="text-lg">Fetching Media</span>
         </div>
       }
     </>

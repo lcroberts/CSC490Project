@@ -5,15 +5,18 @@ import { useInstance } from "@milkdown/react";
 import { useNodeViewContext } from "@prosemirror-adapter/react"
 import { useEffect, useState } from "react";
 import { audioNode, customImageNode, videoNode } from "./CustomNodes";
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MiB
+import useAppState from "@/hooks/useAppState";
+import { Input } from "../ui/input";
+import Spinner from "../ui/spinner";
+const MAX_FILE_SIZE = 20 * 1000 * 1000; // 20MB
 
 /**
  * @param {{width: number, height: number}} dimensions
  * @returns {{width: number, height: number}}
  */
 function calculateImageDimensions(dimensions) {
-  const API_MAX_LONG_SIDE_LENGTH = 2000;
-  const API_MAX_SHORT_SIDE_LENGTH = 768;
+  const API_MAX_LONG_SIDE_LENGTH = 1333;
+  const API_MAX_SHORT_SIDE_LENGTH = 512;
   const { width, height } = dimensions;
 
   // Calculate ratio of the long/short dimensions to the max available ones
@@ -43,10 +46,12 @@ function calculateImageDimensions(dimensions) {
 }
 
 const MediaUploadButton = () => {
-  // TODO: Limit file upload size to 25MB
   const { contentRef } = useNodeViewContext()
   const [_, getInstance] = useInstance();
+  const [status, setStatus] = useState("pending");
+  const [errorMsg, setErrorMsg] = useState(null);
   const http = useAxios();
+  const { activeNoteInfo } = useAppState();
 
   /** @type {[?File, Function]} */
   const [finalFile, setFinalFile] = useState(null);
@@ -67,7 +72,7 @@ const MediaUploadButton = () => {
 
       const formData = new FormData();
       formData.append("name", finalFile.name);
-      formData.append("note_id", 1); // TODO: Use appropriate note_id
+      formData.append("note_id", activeNoteInfo.id);
       const reader = new FileReader();
       reader.onload = async (event) => {
         const buffer = new Uint8Array(event.target.result);
@@ -78,29 +83,43 @@ const MediaUploadButton = () => {
           setTimeout(async () => {
             if (isVideo(finalFile.type)) {
               const alt = finalFile.name;
-              // TODO: Use sumamries to get alt text
               dispatch(tr.replaceWith(
                 selection.from,
                 selection.to,
                 videoNode.type(ctx).create({ src: src, alt: alt }),
               ));
             } else if (isAudio(finalFile.type)) {
-              const alt = finalFile.name;
-              const res = await http.post('/api/transcription/send', data);
-              dispatch(tr.replaceWith(
-                selection.from,
-                selection.to,
-                audioNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
-              ));
+              const data = new FormData();
+              data.append("audio", finalFile);
+              try {
+                const res = await http.post('/api/transcription/send', data);
+                dispatch(tr.replaceWith(
+                  selection.from,
+                  selection.to,
+                  audioNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
+                ));
+              } catch (e) {
+                setStatus("error");
+                setErrorMsg("There was an error processing your file. Please try again later.");
+                setFinalFile(null);
+                throw e;
+              }
             } else {
               const data = new FormData();
               data.append("image", finalFile);
-              const res = await http.post('/api/description/send', data);
-              dispatch(tr.replaceWith(
-                selection.from,
-                selection.to,
-                customImageNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
-              ));
+              try {
+                const res = await http.post('/api/description/send', data);
+                dispatch(tr.replaceWith(
+                  selection.from,
+                  selection.to,
+                  customImageNode.type(ctx).create({ src: src, alt: res.data.summary || finalFile.name }),
+                ));
+              } catch (e) {
+                setStatus("error");
+                setErrorMsg("There was an error processing your file. Please try again later.");
+                setFinalFile(null);
+                throw e;
+              }
             }
           });
         });
@@ -115,6 +134,11 @@ const MediaUploadButton = () => {
     /** @type {File|null} */
     let file = e.target.files[0] || undefined;
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setStatus("error");
+        setErrorMsg("The selected file exceeds the maximum size of 20MB");
+        return;
+      }
       if (isImage(file.type)) {
         // Convert image to webp
         const imageData = await createImageBitmap(file);
@@ -135,17 +159,34 @@ const MediaUploadButton = () => {
       } else {
         setFinalFile(file);
       }
+      setStatus("processing");
+      setErrorMsg(""); // Clear error message if set
     }
   }
 
   return (
-    <input
-      onChange={onChange}
-      type="file"
-      className="media-upload w-full text-slate-500 font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-gray-800 file:hover:bg-gray-700 file:text-white rounded"
-      accept="image/*, video/*, audio/*"
-      ref={contentRef}
-    />
+    <>
+      {(status === "pending" || status === "error") &&
+        <>
+          <Input
+            onChange={onChange}
+            type="file"
+            accept="image/*, video/*, audio/*"
+            className={`media-upload w-full ${status === "error" ? "text-red-600" : "text-slate-600"} font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-black file:hover:bg-primary/90 file:text-white rounded-sm`}
+            ref={contentRef}
+          />
+          {status === "error" &&
+            <div className="text-red-600 font-bold text-sm">{errorMsg}</div>
+          }
+        </>
+      }
+      {status === "processing" &&
+        <div className="flex gap-4 items-center">
+          <Spinner className={"w-8 h-8"} />
+          <span className="text-lg">Processing File</span>
+        </div>
+      }
+    </>
   )
 }
 

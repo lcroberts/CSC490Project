@@ -1,8 +1,6 @@
 import * as React from "react";
-import { useState } from "react";
-import { ArchiveX, Command, File, Inbox, Send, Trash2 } from "lucide-react";
+import { ArchiveX, Command, File, Inbox, Save, Send, Trash2 } from "lucide-react";
 import { NavUser } from "@/components/nav-user";
-import { Label } from "@/components/ui/label";
 import {
   Sidebar,
   SidebarContent,
@@ -16,62 +14,31 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Switch } from "@/components/ui/switch";
 import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
-
-// This is sample data until we use the database
-const data = {
-  navMain: [
-    {
-      title: "Notes",
-      url: "#",
-      icon: Inbox,
-      isActive: true,
-    },
-    {
-      title: "New Note",
-      url: "#",
-      icon: File,
-      isActive: false,
-    },
-    {
-      title: "Summarize",
-      url: "#",
-      icon: Send,
-      isActive: false,
-    },
-    {
-      title: "Junk",
-      url: "#",
-      icon: ArchiveX,
-      isActive: false,
-    },
-    {
-      title: "Delete",
-      url: "#",
-      icon: Trash2,
-      isActive: false,
-    },
-  ],
-};
+import useAxios from "@/hooks/useAxios";
+import { encryptString, getEncryptionKey } from "@/lib/utils";
+import Modal from "./Modal";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
 export function AppSidebar({ children, ...props }) {
   // Note: I'm using state to show active item.
   // IRL you should use the url/router.
-  const [activeItem, setActiveItem] = React.useState(data.navMain[0]);
-  const [activeNoteIndex, setActiveNoteIndex] = React.useState(null);
   const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
   const user = {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
-  const { notes, setActiveNote } = useAppState();
+  const { notes, setNotes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
+  const http = useAxios();
+  const [modalInput, setModalInput] = React.useState("");
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     note.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -109,25 +76,60 @@ export function AppSidebar({ children, ...props }) {
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
-                {data.navMain.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      tooltip={{
-                        children: item.title,
-                        hidden: false,
-                      }}
-                      onClick={() => {
-                        setActiveItem(item);
-                        setOpen(true);
-                      }}
-                      isActive={activeItem.title === item.title}
-                      className="px-2.5 md:px-2"
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={{
+                      children: "New Note",
+                      hidden: false,
+                    }}
+                    onClick={() => {
+                      setModalOpen(true);
+                    }}
+                    className="px-2.5 md:px-2"
+                  >
+                    <File />
+                    <span>New Note</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={{
+                      children: "Save Note",
+                      hidden: false,
+                    }}
+                    onClick={async () => {
+                      const key = await getEncryptionKey();
+                      const data = await encryptString(activeNoteInfo.content, key);
+                      http.put('/api/notes/save', {
+                        id: activeNoteInfo.id,
+                        body: data,
+                      }).then((res) => { })
+                    }}
+                    className="px-2.5 md:px-2"
+                  >
+                    <Save />
+                    <span>Save Note</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={{
+                      children: "Delete",
+                      hidden: false,
+                    }}
+                    onClick={() => {
+                      const id = activeNoteInfo.id;
+                      http.delete(`/api/notes/${id}/delete`).then((res) => {
+                        setNotes(notes.filter(note => note.id !== id));
+                        setActiveNote(null);
+                      })
+                    }}
+                    className="px-2.5 md:px-2"
+                  >
+                    <Trash2 />
+                    <span>Delete</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -142,7 +144,7 @@ export function AppSidebar({ children, ...props }) {
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-base font-medium text-foreground">
-              {activeItem.title}
+              Notes
             </div>
           </div>
           <SidebarInput
@@ -157,19 +159,18 @@ export function AppSidebar({ children, ...props }) {
               {filteredNotes.map((note, idx) => (
                 <div
                   key={idx}
-                  className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNoteIndex === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
+                  className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 transition-colors duration-500 ease-in-out ${activeNote === idx ? 'bg-gray-200' : 'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'}`}
                   onClick={() => {
-                    setActiveNoteIndex(idx);
                     setActiveNote(idx);
                   }}
                 >
                   <div className="flex w-full items-center gap-2">
                     <span>{user?.name}</span>{" "}
-                    <span className="ml-auto text-xs">{note.createdAt}</span>
+                    <span className="ml-auto text-xs">{(new Date(note.created_at + " UTC")).toLocaleString()}</span>
                   </div>
-                  <span className="font-medium">{note.title}</span>
+                  <span className="font-medium">{note.name}</span>
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-                    {note.content}
+                    {typeof note.content === "string" ? note.content : ""}
                   </span>
                   <div className="flex gap-2 mt-2">
                     <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Fishing</span>
@@ -186,6 +187,28 @@ export function AppSidebar({ children, ...props }) {
       <div className="flex-1 overflow-auto">
         {children}
       </div>
+      <Modal show={modalOpen} onClose={() => setModalOpen(false)}>
+        <h1 className="font-bold text-4xl text-center mb-3">New Note</h1>
+        <div className="flex mx-3 mb-3 gap-2">
+          <Input placeholder="Title" value={modalInput} onChange={e => setModalInput(e.target.value)}></Input>
+          <Button disabled={modalInput.trim() === ""} onClick={() => {
+            http.post('/api/notes/create', {
+              name: modalInput,
+            }).then(res => {
+              const id = res.data.id;
+              http.get(`/api/notes/${id}`).then((res) => {
+                let newNotes = structuredClone(notes);
+                newNotes.unshift(res.data);
+                setNotes(newNotes);
+              });
+            }).catch(err => {
+              console.log(err)
+            });
+            setModalOpen(false);
+            setModalInput("");
+          }}>Create Note</Button>
+        </div>
+      </Modal>
     </Sidebar>
   );
 }
