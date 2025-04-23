@@ -89,7 +89,7 @@ class OpenAIHelpers
 
     public static function submitTranscription($audio)
     {
-
+        $cfile = new \CURLFile($audio);
 
         $client = curl_init();
 
@@ -99,12 +99,13 @@ class OpenAIHelpers
         ];
 
         $content = json_encode(array(
-            'file' => $audio,
+            'file' => $cfile,
             'model' => 'whisper-1',
+            'response_format' => 'json'
         ));
 
         curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/audio/transcriptions");
-        curl_setopt($client, CURLOPT_POST, true);
+        curl_setopt($client, CURLOPT_POST, 1);
         curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($client, CURLOPT_POSTFIELDS, $content);
         curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
