@@ -87,7 +87,7 @@ class OpenAIHelpers
         return $result;
     }
 
-    public static function submitTrancription($audio)
+    public static function submitTranscription($audio)
     {
 
 
