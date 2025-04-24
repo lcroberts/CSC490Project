@@ -17,7 +17,7 @@ import {
 import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
 import useAxios from "@/hooks/useAxios";
-import { encryptString, getEncryptionKey } from "@/lib/utils";
+import { decryptString, encryptString, getEncryptionKey } from "@/lib/utils";
 import Modal from "./Modal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -33,87 +33,42 @@ export function AppSidebar({ children, ...props }) {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
+
   const { notes, setNotes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
   const [modalInput, setModalInput] = React.useState("");
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  // Tag dialog state
-  const [isTagDialogOpen, setIsTagDialogOpen] = React.useState(false);
-  const [tagMode, setTagMode] = React.useState("auto"); // "auto" or "manual"
-  const [manualTags, setManualTags] = React.useState("");
-  const manualTagInputRef = React.useRef(null);
+  const filteredNotes = notes.filter(note =>
+    note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const refreshNotes = async () => {
+    try {
+      const response = await http.get('/api/notes');
+      let notesRefresh = response.data;
+      const key = await getEncryptionKey();
+      for (let i = 0; i < notesRefresh.length; i++) {
+        if (notesRefresh[i].content && notesRefresh[i].content.trim() !== "") {
+          notesRefresh[i].content = await decryptString(notesRefresh[i].content, key);
+        }
+      }
+      setNotes(notesRefresh);
+    } catch (err) {
+      console.error("Failed to refresh notes; ", err);
+    }
+  }
 
   // Remove tag handler
   const handleRemoveTag = async (noteId, tagId) => {
     try {
       await http.delete(`/api/tags/${tagId}/delete`);
-      setNotes(notes =>
-        notes.map(note =>
-          note.id === noteId
-            ? { ...note, tags: (note.tags || []).filter(tag => tag.id !== tagId) }
-            : note
-        )
-      );
+      refreshNotes();
     } catch (err) {
       console.error("Failed to remove tag", err);
     }
   };
-
-  // Helper function to add a tag manually
-  const handleAddManualTag = async (noteId, tagName) => {
-    try {
-      const res = await http.post('/api/tags/create_single', { note_id: noteId, name: tagName });
-      const newTag = res.data;
-      setNotes(notes =>
-        notes.map(note =>
-          note.id === noteId
-            ? { ...note, tags: [...(note.tags || []), newTag] }
-            : note
-        )
-      );
-    } catch (err) {
-      console.error("Failed to add tag", err);
-    }
-  };
-
-  // The manual tag handler (comma separated)
-  const handleManualTags = async () => {
-    if (activeNote == null) return;
-    const noteId = notes[activeNote].id;
-    const tags = manualTags.split(",").map(t => t.trim()).filter(Boolean);
-    for (const tag of tags) {
-      await handleAddManualTag(noteId, tag);
-    }
-    setIsTagDialogOpen(false);
-    setManualTags("");
-  };
-
-  // The function to generate tags automatically
-  const handleGenerateTags = async () => {
-    if (activeNote == null) return;
-    const noteId = notes[activeNote].id;
-    const content = notes[activeNote].content;
-    try {
-      const res = await http.post('/api/tags/create', { note_id: noteId, content });
-      const generatedTags = res.data.tags;
-      setNotes(notes =>
-        notes.map(note =>
-          note.id === noteId
-            ? { ...note, tags: [...(note.tags || []), ...generatedTags] }
-            : note
-        )
-      );
-    } catch (err) {
-      console.error("Failed to generate tags", err);
-    }
-    setIsTagDialogOpen(false);
-  };
-
-  const filteredNotes = notes.filter(note =>
-    note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <Sidebar
@@ -216,42 +171,6 @@ export function AppSidebar({ children, ...props }) {
             <div className="text-base font-medium text-foreground">
               Notes
             </div>
-            <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
-              <DialogContent className="bg-white text-black">
-                <DialogTitle>Tag Options</DialogTitle>
-                <DialogDescription className="text-gray-500">
-                  Choose how to add tags:
-                </DialogDescription>
-                <RadioGroup
-                  value={tagMode}
-                  onValueChange={setTagMode}
-                  className="flex flex-col gap-2 my-2"
-                >
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="auto" /> Auto-generate tags
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="manual" /> Manually add tags
-                  </label>
-                </RadioGroup>
-                {tagMode === "manual" && (
-                  <input
-                    ref={manualTagInputRef}
-                    type="text"
-                    className="w-full border rounded px-2 py-1 mt-2"
-                    placeholder="Enter tags, separated by commas"
-                    value={manualTags}
-                    onChange={e => setManualTags(e.target.value)}
-                  />
-                )}
-                <Button
-                  className="mt-2 bg-black text-white"
-                  onClick={tagMode === "auto" ? handleGenerateTags : handleManualTags}
-                >
-                  {tagMode === "auto" ? "Auto-generate Tags" : "Save Tags"}
-                </Button>
-              </DialogContent>
-            </Dialog>
           </div>
           <SidebarInput
             placeholder="Type to search..."
@@ -284,14 +203,14 @@ export function AppSidebar({ children, ...props }) {
                         key={tag.id}
                         className="flex items-center bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full shadow hover:scale-105 transition-transform"
                       >
-                        <span className="mr-2">{tag.name}</span>
+                        <span className="mr-2">{tag.content}</span>
                         <button
                           className="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors"
                           onClick={e => {
                             e.stopPropagation();
                             handleRemoveTag(note.id, tag.id);
                           }}
-                          aria-label={`Remove tag ${tag.name}`}
+                          aria-label={`Remove tag ${tag.content}`}
                         >
                           <X size={14} />
                         </button>

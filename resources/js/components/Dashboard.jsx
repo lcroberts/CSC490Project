@@ -23,11 +23,12 @@ import { Progress } from "@/components/ui/progress";
 import { TypeAnimation } from 'react-type-animation';
 import useAxios from "@/hooks/useAxios";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { decryptString, getEncryptionKey } from "@/lib/utils";
 
 export default function Dashboard() {
   const user = usePage().props.auth.user; // Get the user object from the page props
   const http = useAxios();
-  const { notes, activeNote } = useAppState(); // Get notes and activeNote from the app state
+  const { notes, setNotes, activeNote } = useAppState(); // Get notes and activeNote from the app state
   const [isDialogOpen, setIsDialogOpen] = useState(false); // State for the summary dialog
   const [isLoading, setIsLoading] = useState(false); // Loading state for the summary generation
   const [summary, setSummary] = useState(""); // State to hold the summary text
@@ -40,9 +41,31 @@ export default function Dashboard() {
   const [manualTags, setManualTags] = useState("");
   const manualTagInputRef = useRef(null);
 
+  const refreshNotes = async () => {
+    try {
+      const response = await http.get('/api/notes');
+      let notesRefresh = response.data;
+      const key = await getEncryptionKey();
+      for (let i = 0; i < notesRefresh.length; i++) {
+        if (notesRefresh[i].content && notesRefresh[i].content.trim() !== "") {
+          notesRefresh[i].content = await decryptString(notesRefresh[i].content, key);
+        }
+      }
+      setNotes(notesRefresh);
+    } catch (err) {
+      console.error("Failed to refresh notes; ", err);
+    }
+  }
+
   const handleDialogOpen = () => {
     setIsDialogOpen(true);
     setSummary("");
+  };
+
+  const handleTagDialogOpen = () => {
+    setIsTagDialogOpen(true);
+    setTagMode("auto");
+    setManualTags("");
   };
 
   const handleSummarize = async () => {
@@ -73,21 +96,38 @@ export default function Dashboard() {
     }
   };
 
-  const handleTagDialogOpen = () => {
-    setIsTagDialogOpen(true);
-    setTagMode("auto");
+  // Helper function to add a tag manually
+  const handleAddManualTag = async (noteId, tagName) => {
+    try {
+      const res = await http.post('/api/tags/create_single', { note_id: noteId, tag_content: tagName });
+    } catch (err) {
+      console.error("Failed to add tag", err);
+    }
+  };
+
+  // The manual tag handler (comma separated)
+  const handleManualTags = async () => {
+    if (activeNote == null) return;
+    const noteId = notes[activeNote].id;
+    const tags = manualTags.split(",").map(t => t.trim()).filter(Boolean);
+    for (const tag of tags) {
+      await handleAddManualTag(noteId, tag);
+    }
+    refreshNotes();
+    setIsTagDialogOpen(false);
     setManualTags("");
   };
 
+  // The function to generate tags automatically
   const handleGenerateTags = async () => {
-    if (tagMode === "auto") {
-      // Call your API to auto-generate tags
-      // await http.post('/api/tags/generate', { noteContent: notes[activeNote]?.content });
-      alert("Auto-generate tags (implement API call here)");
-    } else {
-      // Save manual tags
-      // await http.post('/api/tags/manual', { tags: manualTags, noteId: activeNote });
-      alert(`Manual tags: ${manualTags}`);
+    if (activeNote == null) return;
+    const noteId = notes[activeNote].id;
+    const noteContent = notes[activeNote].content;
+    try {
+      const res = await http.post('/api/tags/create', { note_id: noteId, note_content: noteContent });
+      refreshNotes();
+    } catch (err) {
+      console.error("Failed to generate tags", err);
     }
     setIsTagDialogOpen(false);
   };
@@ -131,9 +171,9 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent className="bg-white text-black">
                 <DialogTitle>Tag Options</DialogTitle>
-                <DialogDescription className="text-gray-500">
-                  Choose how to add tags:
-                </DialogDescription>
+                  <DialogDescription className="text-gray-500">
+                    Choose how to add tags:
+                  </DialogDescription>
                 <RadioGroup
                   value={tagMode}
                   onValueChange={setTagMode}
@@ -158,9 +198,9 @@ export default function Dashboard() {
                 )}
                 <Button
                   className="mt-2 bg-black text-white"
-                  onClick={handleGenerateTags}
+                  onClick={tagMode === "auto" ? handleGenerateTags : handleManualTags}
                 >
-                  Save Tags
+                  {tagMode === "auto" ? "Auto-generate Tags" : "Save Tags"}
                 </Button>
               </DialogContent>
             </Dialog>
