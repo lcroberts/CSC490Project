@@ -1,12 +1,9 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
+  BadgeCheck,
 } from "lucide-react"
 
 import {
@@ -17,7 +14,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,13 +26,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-export function NavUser({
-  user
-}) {
+export function NavUser({ user }) {
   const { isMobile } = useSidebar()
 
   return (
-    (<SidebarMenu>
+    <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -72,35 +66,12 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-                <a href="/upgrade">
-                  <Sparkles />
-                  Upgrade to Pro
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <a href="/profile">
-                  <BadgeCheck />
-                  Profile
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/billing">
-                  <CreditCard />
-                  Billing
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href="/notifications">
-                  <Bell />
-                  Notifications
-                </a>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+              <a href="/profile">
+                <BadgeCheck />
+                Profile
+              </a>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <a href="/logout">
@@ -111,6 +82,6 @@ export function NavUser({
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-    </SidebarMenu>)
+    </SidebarMenu>
   );
 }
