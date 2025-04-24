@@ -19,7 +19,7 @@ class Tag
     /**
      * @throws UnexpectedValueException if API prompts fail.
      */
-    public static function generateAndSave(int $note_id): array
+    public static function generateAndSave(int $note_id, string $note_content): array
     {
         $note = Note::getById($note_id);
 
@@ -34,7 +34,7 @@ class Tag
                 [{'excerpt': '...'},\n \
                 ...\n \
                 {'excerpt': '...'}]",
-            "{{{" . $note->content . "}}}"
+            "{{{" . $note_content . "}}}"
         );
 
         // Guard this against error return value later
@@ -63,7 +63,8 @@ class Tag
             throw new UnexpectedValueException("Empty JSON object returned from API while generating tags.");
         }
 
-        $tags = explode(",", $json->choices[0]->message->content);
+        $symbols = array("[", "]", "\"", "'", "\\n", "MEDIUM", ":");
+        $tags = str_replace($symbols, "", explode(",", $json->choices[0]->message->content));
         $indices = [];
         foreach ($tags as $content) {
             $indices[] = self::save($note_id, $content);
@@ -258,7 +259,7 @@ class Tag
             throw new UnauthorizedException("User must be authenticated to delete tag.");
         
         $params = ['id' => $id];
-        $sql = "SELECT * FROM tags WHERE id = :id;";
+        $sql = "DELETE FROM tags WHERE id = :id;";
 
         try {
             DB::delete($sql, $params);

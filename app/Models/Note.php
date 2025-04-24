@@ -17,6 +17,7 @@ class Note
     public string $name;
     public string $content;
     public string $created_at;
+    public array $tags;
 
     private static function asObjectArray(array &$results): array
     {
@@ -223,6 +224,7 @@ class Note
         $disk = StorageHelpers::getS3Disk($disk_root);
         foreach ($objs as $obj) {
             $obj->content = $disk->get(Auth::id() . "/notes/" . $obj->name . "_" . $obj->id);
+            $obj->tags = Tag::index($obj->id);
         }
 
         return $objs;

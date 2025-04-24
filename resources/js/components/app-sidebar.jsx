@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArchiveX, Command, File, Inbox, Save, Send, Trash2 } from "lucide-react";
+import { ArchiveX, Command, File, Inbox, Save, Send, Trash2, X } from "lucide-react";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -17,21 +17,23 @@ import {
 import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
 import useAxios from "@/hooks/useAxios";
-import { encryptString, getEncryptionKey } from "@/lib/utils";
+import { decryptString, encryptString, getEncryptionKey } from "@/lib/utils";
 import Modal from "./Modal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
+
 export function AppSidebar({ children, ...props }) {
-  // Note: I'm using state to show active item.
-  // IRL you should use the url/router.
   const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
   const user = {
     ...usePage().props.auth.user,
     avatar: avatar,
   }
+
   const { notes, setNotes, activeNote, setActiveNote, activeNoteInfo } = useAppState();
   const http = useAxios();
   const [modalInput, setModalInput] = React.useState("");
@@ -39,8 +41,35 @@ export function AppSidebar({ children, ...props }) {
 
   const filteredNotes = notes.filter(note =>
     note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.tags.some(tag => tag.content.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  const refreshNotes = async () => {
+    try {
+      const response = await http.get('/api/notes');
+      let notesRefresh = response.data;
+      const key = await getEncryptionKey();
+      for (let i = 0; i < notesRefresh.length; i++) {
+        if (notesRefresh[i].content && notesRefresh[i].content.trim() !== "") {
+          notesRefresh[i].content = await decryptString(notesRefresh[i].content, key);
+        }
+      }
+      setNotes(notesRefresh);
+    } catch (err) {
+      console.error("Failed to refresh notes; ", err);
+    }
+  }
+
+  // Remove tag handler
+  const handleRemoveTag = async (noteId, tagId) => {
+    try {
+      await http.delete(`/api/tags/${tagId}/delete`);
+      refreshNotes();
+    } catch (err) {
+      console.error("Failed to remove tag", err);
+    }
+  };
 
   return (
     <Sidebar
@@ -48,9 +77,7 @@ export function AppSidebar({ children, ...props }) {
       className="overflow-hidden h-full [&>[data-sidebar=sidebar]]:flex-row"
       {...props}
     >
-      {/* This is the first sidebar */}
-      {/* We disable collapsible and adjust width to icon. */}
-      {/* This will make the sidebar appear as icons. */}
+      {/* Icon sidebar */}
       <Sidebar
         collapsible="none"
         className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
@@ -138,8 +165,7 @@ export function AppSidebar({ children, ...props }) {
           <NavUser user={user} />
         </SidebarFooter>
       </Sidebar>
-      {/* This is the second sidebar */}
-      {/* We disable collapsible and let it fill remaining space */}
+      {/* Main sidebar */}
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
@@ -172,11 +198,25 @@ export function AppSidebar({ children, ...props }) {
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
                     {typeof note.content === "string" ? note.content : ""}
                   </span>
-                  <div className="flex gap-2 mt-2">
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Fishing</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Cooking</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {(note.tags || []).map(tag => (
+                      <span
+                        key={tag.id}
+                        className="flex items-center bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full shadow hover:scale-105 transition-transform"
+                      >
+                        <span className="mr-2">{tag.content}</span>
+                        <button
+                          className="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleRemoveTag(note.id, tag.id);
+                          }}
+                          aria-label={`Remove tag ${tag.content}`}
+                        >
+                          <X size={14} />
+                        </button>
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}

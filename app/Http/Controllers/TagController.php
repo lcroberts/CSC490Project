@@ -24,13 +24,13 @@ class TagController extends Controller
 
     public function add(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'note_id' => 'required|integer',
             'tag_content' => 'required|max:12',
         ]);
 
         try {
-            Tag::save($request->input('note_id'), $request->input('tag_content'));
+            Tag::save($validated['note_id'], $validated['tag_content']);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
@@ -40,12 +40,13 @@ class TagController extends Controller
 
     public function generate(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'note_id' => 'required|integer',
+            'note_content' => 'required|string',
         ]);
 
         try {
-            Tag::generateAndSave($request->input('note_id'));
+            Tag::generateAndSave($validated['note_id'], $validated['note_content']);
         } catch (Exception $err) {
             return ExceptionHelper::handleException($err);
         }
