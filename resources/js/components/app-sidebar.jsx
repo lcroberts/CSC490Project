@@ -41,7 +41,8 @@ export function AppSidebar({ children, ...props }) {
 
   const filteredNotes = notes.filter(note =>
     note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    note.tags.some(tag => tag.content.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const refreshNotes = async () => {
