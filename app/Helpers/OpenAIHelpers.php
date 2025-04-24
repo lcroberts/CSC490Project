@@ -86,4 +86,34 @@ class OpenAIHelpers
         $result = OpenAIHelpers::submitAny("chat/completions", $content);
         return $result;
     }
+
+    public static function submitTranscription($audio)
+    {
+        $client = curl_init();
+
+        $cfile = new \CURLFile($audio, 'audio/mpeg');
+
+        $headers = [
+            'Authorization: Bearer ' . env('OPENAI_KEY'),
+            'Content-Type: multipart/form-data',
+        ];
+
+        $content = array(
+            'file' => $cfile,
+            'model' => 'whisper-1',
+            'response_format' => 'json'
+        );
+
+        curl_setopt($client, CURLOPT_URL, "https://api.openai.com/v1/audio/transcriptions");
+        curl_setopt($client, CURLOPT_POST, 1);
+        curl_setopt($client, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($client, CURLOPT_POSTFIELDS, $content);
+        curl_setopt($client, CURLOPT_RETURNTRANSFER, true);
+
+        $result = curl_exec($client);
+        curl_close($client);
+
+        return $result;
+
+    }
 }
