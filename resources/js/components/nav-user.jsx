@@ -67,13 +67,6 @@ export function NavUser({ user }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <a href="/profile">
-                <BadgeCheck />
-                Profile
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
               <a href="/logout">
                 <LogOut />
                 Log out
