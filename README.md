@@ -101,3 +101,19 @@ There is a commented out block in `routes/web.php` with some examples of how to 
 ### API Routes
 
 If you want to make API routes for the frontend to use you can add the routes to the route group in `routes/api.php`. All routes inside the group require authentication which is done automatically through the `useAxios` hook. Just ensure that any route using the hook is in a route group that requires authentication and has the `AddApiToken` middleware.
+
+## Upping PHP Memory Limits
+
+To handle larger files you may need to increase some of the memory limits. First run `php --ini` to find your `php.ini` location.
+
+Next find the following variables and increase them to a larger value, below will be some sane recommended ones.
+
+```
+post_max_size = 256M
+upload_max_filesize = 256M
+memory_limit = 512M
+```
+
+## Deploying
+
+When deploying run the command `composer run optimize`
