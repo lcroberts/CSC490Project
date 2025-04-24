@@ -12,7 +12,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { usePage } from "@inertiajs/react";
 import useAppState from "@/hooks/useAppState";
@@ -21,15 +20,14 @@ import { decryptString, encryptString, getEncryptionKey } from "@/lib/utils";
 import Modal from "./Modal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useToast } from "@/hooks/use-toast";
 
 // const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
 const avatar = "https://imgs.search.brave.com/_dRzQ-gSzIPKP2ka_ZOREbcP6eiOw6sWfVg1AeO42d4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9nZXRk/cmF3aW5ncy5jb20v/ZnJlZS1pY29uLWJ3/L2JsYW5rLWF2YXRh/ci1pY29uLTcucG5n";
 
 export function AppSidebar({ children, ...props }) {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const { setOpen } = useSidebar();
+  const { toast } = useToast();
   const user = {
     ...usePage().props.auth.user,
     avatar: avatar,
@@ -131,7 +129,16 @@ export function AppSidebar({ children, ...props }) {
                       http.put('/api/notes/save', {
                         id: activeNoteInfo.id,
                         body: data,
-                      }).then((res) => { })
+                      }).then((res) => {
+                        toast({
+                          description: "Your note has been saved."
+                        })
+                      }).catch((res) => {
+                          toast({
+                            variant: "destructive",
+                            description: "Failed to save note.",
+                          })
+                        })
                     }}
                     className="px-2.5 md:px-2"
                   >
