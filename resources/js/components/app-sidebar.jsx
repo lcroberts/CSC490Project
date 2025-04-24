@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ArchiveX, Command, File, Inbox, Save, Send, Trash2 } from "lucide-react";
+import { ArchiveX, Command, File, Inbox, Save, Send, Trash2, X } from "lucide-react";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -21,11 +21,12 @@ import { encryptString, getEncryptionKey } from "@/lib/utils";
 import Modal from "./Modal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const avatar = "https://www.thesprucecrafts.com/thmb/NqC78zeciImIpiuZKQoByetgpBA=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/thegraphicsfairy-5dfa84d312cd407194d8198f6bfd2008.jpg";
+
 export function AppSidebar({ children, ...props }) {
-  // Note: I'm using state to show active item.
-  // IRL you should use the url/router.
   const [searchQuery, setSearchQuery] = React.useState("");
   const { setOpen } = useSidebar();
   const user = {
@@ -36,6 +37,78 @@ export function AppSidebar({ children, ...props }) {
   const http = useAxios();
   const [modalInput, setModalInput] = React.useState("");
   const [modalOpen, setModalOpen] = React.useState(false);
+
+  // Tag dialog state
+  const [isTagDialogOpen, setIsTagDialogOpen] = React.useState(false);
+  const [tagMode, setTagMode] = React.useState("auto"); // "auto" or "manual"
+  const [manualTags, setManualTags] = React.useState("");
+  const manualTagInputRef = React.useRef(null);
+
+  // Remove tag handler
+  const handleRemoveTag = async (noteId, tagId) => {
+    try {
+      await http.delete(`/api/tags/${tagId}/delete`);
+      setNotes(notes =>
+        notes.map(note =>
+          note.id === noteId
+            ? { ...note, tags: (note.tags || []).filter(tag => tag.id !== tagId) }
+            : note
+        )
+      );
+    } catch (err) {
+      console.error("Failed to remove tag", err);
+    }
+  };
+
+  // Helper function to add a tag manually
+  const handleAddManualTag = async (noteId, tagName) => {
+    try {
+      const res = await http.post('/api/tags/create_single', { note_id: noteId, name: tagName });
+      const newTag = res.data;
+      setNotes(notes =>
+        notes.map(note =>
+          note.id === noteId
+            ? { ...note, tags: [...(note.tags || []), newTag] }
+            : note
+        )
+      );
+    } catch (err) {
+      console.error("Failed to add tag", err);
+    }
+  };
+
+  // The manual tag handler (comma separated)
+  const handleManualTags = async () => {
+    if (activeNote == null) return;
+    const noteId = notes[activeNote].id;
+    const tags = manualTags.split(",").map(t => t.trim()).filter(Boolean);
+    for (const tag of tags) {
+      await handleAddManualTag(noteId, tag);
+    }
+    setIsTagDialogOpen(false);
+    setManualTags("");
+  };
+
+  // The function to generate tags automatically
+  const handleGenerateTags = async () => {
+    if (activeNote == null) return;
+    const noteId = notes[activeNote].id;
+    const content = notes[activeNote].content;
+    try {
+      const res = await http.post('/api/tags/create', { note_id: noteId, content });
+      const generatedTags = res.data.tags;
+      setNotes(notes =>
+        notes.map(note =>
+          note.id === noteId
+            ? { ...note, tags: [...(note.tags || []), ...generatedTags] }
+            : note
+        )
+      );
+    } catch (err) {
+      console.error("Failed to generate tags", err);
+    }
+    setIsTagDialogOpen(false);
+  };
 
   const filteredNotes = notes.filter(note =>
     note.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -48,9 +121,7 @@ export function AppSidebar({ children, ...props }) {
       className="overflow-hidden h-full [&>[data-sidebar=sidebar]]:flex-row"
       {...props}
     >
-      {/* This is the first sidebar */}
-      {/* We disable collapsible and adjust width to icon. */}
-      {/* This will make the sidebar appear as icons. */}
+      {/* Icon sidebar */}
       <Sidebar
         collapsible="none"
         className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
@@ -138,14 +209,49 @@ export function AppSidebar({ children, ...props }) {
           <NavUser user={user} />
         </SidebarFooter>
       </Sidebar>
-      {/* This is the second sidebar */}
-      {/* We disable collapsible and let it fill remaining space */}
+      {/* Main sidebar */}
       <Sidebar collapsible="none" className="hidden flex-1 md:flex">
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-base font-medium text-foreground">
               Notes
             </div>
+            <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
+              <DialogContent className="bg-white text-black">
+                <DialogTitle>Tag Options</DialogTitle>
+                <DialogDescription className="text-gray-500">
+                  Choose how to add tags:
+                </DialogDescription>
+                <RadioGroup
+                  value={tagMode}
+                  onValueChange={setTagMode}
+                  className="flex flex-col gap-2 my-2"
+                >
+                  <label className="flex items-center gap-2">
+                    <RadioGroupItem value="auto" /> Auto-generate tags
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <RadioGroupItem value="manual" /> Manually add tags
+                  </label>
+                </RadioGroup>
+                {tagMode === "manual" && (
+                  <input
+                    ref={manualTagInputRef}
+                    type="text"
+                    className="w-full border rounded px-2 py-1 mt-2"
+                    placeholder="Enter tags, separated by commas"
+                    value={manualTags}
+                    onChange={e => setManualTags(e.target.value)}
+                  />
+                )}
+                <Button
+                  className="mt-2 bg-black text-white"
+                  onClick={tagMode === "auto" ? handleGenerateTags : handleManualTags}
+                >
+                  {tagMode === "auto" ? "Auto-generate Tags" : "Save Tags"}
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
           <SidebarInput
             placeholder="Type to search..."
@@ -172,11 +278,25 @@ export function AppSidebar({ children, ...props }) {
                   <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
                     {typeof note.content === "string" ? note.content : ""}
                   </span>
-                  <div className="flex gap-2 mt-2">
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Fishing</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Cooking</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
-                    <span className="bg-orange-300 text-white text-xs px-2 py-1 rounded">Music</span>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {(note.tags || []).map(tag => (
+                      <span
+                        key={tag.id}
+                        className="flex items-center bg-gradient-to-r from-orange-500 to-pink-500 text-white text-xs px-3 py-1 rounded-full shadow hover:scale-105 transition-transform"
+                      >
+                        <span className="mr-2">{tag.name}</span>
+                        <button
+                          className="ml-1 p-0.5 hover:bg-white/20 rounded-full transition-colors"
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleRemoveTag(note.id, tag.id);
+                          }}
+                          aria-label={`Remove tag ${tag.name}`}
+                        >
+                          <X size={14} />
+                        </button>
+                      </span>
+                    ))}
                   </div>
                 </div>
               ))}
