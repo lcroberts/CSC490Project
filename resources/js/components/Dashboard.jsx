@@ -110,7 +110,7 @@ export default function Dashboard() {
       if (error.response && error.response.status === 422) {
         setSummary('Invalid content. Please provide valid text to summarize.');
       } else {
-        setSummary('Failed to fetch summary. Please try again later.');
+        setSummary(`Error: ${error.message}`);
       }
     } finally {
       setIsLoading(false);
@@ -184,15 +184,15 @@ export default function Dashboard() {
           </Breadcrumb>
         </header>
         <div className='flex-1 relative'>
-          {activeNote !== null ?
+          {activeNote !== null ? (
             <MarkdownEditor key={activeNote} defaultContent={notes[activeNote].content} />
-            :
+          ) : (
             <div className='h-full flex'>
               <h1 className='mx-auto my-auto text-3xl'>
                 Select a note to get started
               </h1>
             </div>
-          }
+          )}
           <div className="fixed bottom-4 right-4 flex gap-2">
             {/* Tag Button & Dialog */}
             <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
@@ -203,9 +203,9 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent className="bg-white text-black">
                 <DialogTitle>Tag Options</DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                    Choose how to add tags:
-                  </DialogDescription>
+                <DialogDescription className="text-gray-500">
+                  Choose how to add tags:
+                </DialogDescription>
                 <RadioGroup
                   value={tagMode}
                   onValueChange={setTagMode}
@@ -241,7 +241,10 @@ export default function Dashboard() {
               <DialogTrigger asChild>
                 <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
               </DialogTrigger>
-              <DialogContent className="bg-white text-black">
+              <DialogContent
+                className="bg-white text-black w-full max-w-5xl"
+                style={{ minWidth: 700 }}
+              >
                 <DialogTitle>Summarize Note</DialogTitle>
                 <DialogDescription className="text-gray-500">
                   Choose summary length:
@@ -276,7 +279,7 @@ export default function Dashboard() {
                     <DialogDescription className="text-gray-500">
                       Here is a summary of the text you requested
                     </DialogDescription>
-                    <div className="flex min-h-[80px] w-full rounded-md border border-input bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
                       <MarkdownEditor
                         defaultContent={summary}
                         readOnly={true}
