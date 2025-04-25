@@ -8,16 +8,14 @@ import { Crepe } from '@milkdown/crepe';
 import DisableAutoEscapeBrackets from './DisableAutoEscapeBrackets';
 import InlineMediaInputRule from './InlineMediaInputRule';
 import { audioNode, customImageNode, mediaInputRule, mediaNode, remarkDirective, videoNode } from './CustomNodes.js';
-import { ProsemirrorAdapterProvider, usePluginViewFactory, useNodeViewFactory } from '@prosemirror-adapter/react';
-import { slash, SlashView } from './Slash';
+import { ProsemirrorAdapterProvider, useNodeViewFactory } from '@prosemirror-adapter/react';
 import { $view } from '@milkdown/kit/utils';
 import MediaUploadButton from './MediaUploadButton';
 import MediaDisplayComponent from './MediaDisplayComponent';
 import GetSetMarkdownPlugin from './SetMarkdownPlugin';
 import useAppState from '@/hooks/useAppState';
 
-const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
-  const pluginViewFactory = usePluginViewFactory();
+const MilkdownEditor = ({ defaultContent, readOnly, setMarkdown = null }) => {
   const nodeViewFactory = useNodeViewFactory();
 
 
@@ -27,8 +25,9 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       defaultValue: defaultContent,
       features: {
         [Crepe.Feature.BlockEdit]: false,
-      }
+      },
     });
+    crepe.setReadonly(readOnly);
     crepe.editor.use([
       DisableAutoEscapeBrackets,
       InlineMediaInputRule,
@@ -61,13 +60,6 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
       component: MediaDisplayComponent,
     })));
 
-    // crepe.editor.config((ctx) => {
-    //   ctx.set(slash.key, {
-    //     view: pluginViewFactory({
-    //       component: SlashView,
-    //     })
-    //   })
-    // });
     return crepe;
   });
 
@@ -79,21 +71,21 @@ const MilkdownEditor = ({ defaultContent, setMarkdown = null }) => {
  * @returns {JSX.Element}
  * @constructor
  */
-export const MarkdownEditor = ({ defaultContent = "" }) => {
-  const {notes, setNotes, activeNoteInfo} = useAppState();
+export const MarkdownEditor = ({ defaultContent = "", readOnly = false }) => {
+  const { notes, setNotes, activeNoteInfo } = useAppState();
   const updateMarkdown = (markdown) => {
     setNotes(notes.map((note) => {
       if (note.id !== activeNoteInfo.id) {
         return note;
       } else {
-        return {...note, content: markdown}
+        return { ...note, content: markdown }
       }
     }))
   }
   return (
     <MilkdownProvider>
       <ProsemirrorAdapterProvider>
-        <MilkdownEditor defaultContent={defaultContent} setMarkdown={updateMarkdown} />
+        <MilkdownEditor defaultContent={defaultContent} setMarkdown={updateMarkdown} readOnly={readOnly} />
       </ProsemirrorAdapterProvider>
     </MilkdownProvider>
   );

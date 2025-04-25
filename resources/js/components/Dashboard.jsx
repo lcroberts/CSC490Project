@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { usePage } from '@inertiajs/react';
 import useAppState from '@/hooks/useAppState';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -40,6 +40,27 @@ export default function Dashboard() {
   const [tagMode, setTagMode] = useState("auto"); // Use "auto" or "manual"
   const [manualTags, setManualTags] = useState("");
   const manualTagInputRef = useRef(null);
+
+  // Progress bar animation effect
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      setProgress(0);
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 90) {
+            return prev + Math.random() * 10;
+          }
+          return prev;
+        });
+      }, 300);
+    } else if (!isLoading && progress !== 0) {
+      setProgress(100);
+      const timeout = setTimeout(() => setProgress(0), 500);
+      return () => clearTimeout(timeout);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const refreshNotes = async () => {
     try {
@@ -132,6 +153,17 @@ export default function Dashboard() {
     setIsTagDialogOpen(false);
   };
 
+  // Copy summary to clipboard
+  const handleCopySummary = async () => {
+    if (summary) {
+      try {
+        await navigator.clipboard.writeText(summary);
+      } catch (err) {
+        // fallback or error handling
+      }
+    }
+  };
+
   return (
     <SidebarProvider style={{ "--sidebar-width": "350px" }}>
       <AppSidebar />
@@ -152,15 +184,15 @@ export default function Dashboard() {
           </Breadcrumb>
         </header>
         <div className='flex-1 relative'>
-          {activeNote !== null ?
+          {activeNote !== null ? (
             <MarkdownEditor key={activeNote} defaultContent={notes[activeNote].content} />
-            :
+          ) : (
             <div className='h-full flex'>
               <h1 className='mx-auto my-auto text-3xl'>
                 Select a note to get started
               </h1>
             </div>
-          }
+          )}
           <div className="fixed bottom-4 right-4 flex gap-2">
             {/* Tag Button & Dialog */}
             <Dialog open={isTagDialogOpen} onOpenChange={setIsTagDialogOpen}>
@@ -171,9 +203,9 @@ export default function Dashboard() {
               </DialogTrigger>
               <DialogContent className="bg-white text-black">
                 <DialogTitle>Tag Options</DialogTitle>
-                  <DialogDescription className="text-gray-500">
-                    Choose how to add tags:
-                  </DialogDescription>
+                <DialogDescription className="text-gray-500">
+                  Choose how to add tags:
+                </DialogDescription>
                 <RadioGroup
                   value={tagMode}
                   onValueChange={setTagMode}
@@ -204,20 +236,22 @@ export default function Dashboard() {
                 </Button>
               </DialogContent>
             </Dialog>
-            {/* Summarize Button & Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
               </DialogTrigger>
-              <DialogContent className="bg-white text-black">
-                <DialogTitle>Summarize Note</DialogTitle>
-                <DialogDescription className="text-gray-500">
+              <DialogContent
+                className="bg-white text-black w-[250px] max-w-5xl flex flex-col items-center"
+                style={{ minWidth: 700 }}
+              >
+                <DialogTitle className="w-full text-center">Summarize Note</DialogTitle>
+                <DialogDescription className="text-gray-500 w-full text-center">
                   Choose summary length:
                 </DialogDescription>
                 <RadioGroup
                   value={summaryLength}
                   onValueChange={setSummaryLength}
-                  className="flex flex-col gap-2 my-2"
+                  className="flex flex-col gap-2 my-2 items-center"
                 >
                   <label className="flex items-center gap-2">
                     <RadioGroupItem value="one" /> One paragraph
@@ -227,33 +261,31 @@ export default function Dashboard() {
                   </label>
                 </RadioGroup>
                 <Button
-                  className="mt-2 bg-black text-white"
+                  className="mt-2 bg-black text-white mx-auto"
                   onClick={handleSummarize}
                   disabled={isLoading}
                 >
                   Summarize
                 </Button>
                 {isLoading ? (
-                  <div className="flex items-center justify-center mt-4">
-                    <Progress value={progress} className="mx-auto" />
-                    <p className="ml-2 text-black">Processing your request</p>
+                  <div className="flex flex-col items-center justify-center mt-4 w-full">
+                    <Progress value={progress} className="mx-auto w-full" />
+                    <p className="ml-2 text-black text-center">Processing your request</p>
                   </div>
                 ) : summary && (
-                  <div className="mt-4">
-                    <DialogTitle>Summary</DialogTitle>
-                    <DialogDescription className="text-gray-500">
+                  <div className="mt-4 w-full flex flex-col items-center">
+                    <DialogTitle className="w-full text-center">Summary</DialogTitle>
+                    <DialogDescription className="text-gray-500 w-full text-center">
                       Here is a summary of the text you requested
                     </DialogDescription>
-                    <div className="flex min-h-[80px] w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
-                      <TypeAnimation
-                        sequence={[ summary ]}
-                        wrapper="div"
-                        cursor={true}
-                        speed={85}
-                        repeat={0}
+                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                      <MarkdownEditor
+                        defaultContent={summary}
+                        readOnly={true}
+                        hideToolbar={true}
                       />
                     </div>
-                    <Button className="mt-2 bg-black text-white">Copy text</Button>
+                    <Button className="mt-2 bg-black text-white mx-auto" onClick={handleCopySummary}>Copy text</Button>
                   </div>
                 )}
               </DialogContent>
