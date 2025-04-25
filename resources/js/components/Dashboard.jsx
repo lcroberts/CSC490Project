@@ -237,61 +237,60 @@ The document appears to be a simple text example featuring a greeting ("hello") 
                 </Button>
               </DialogContent>
             </Dialog>
-            {/* Summarize Button & Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
-              </DialogTrigger>
-              <DialogContent
-                className="bg-white text-black w-full max-w-5xl"
-                style={{ minWidth: 700 }}
-              >
-                <DialogTitle>Summarize Note</DialogTitle>
-                <DialogDescription className="text-gray-500">
-                  Choose summary length:
-                </DialogDescription>
-                <RadioGroup
-                  value={summaryLength}
-                  onValueChange={setSummaryLength}
-                  className="flex flex-col gap-2 my-2"
-                >
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="one" /> One paragraph
-                  </label>
-                  <label className="flex items-center gap-2">
-                    <RadioGroupItem value="two" /> Two paragraphs
-                  </label>
-                </RadioGroup>
-                <Button
-                  className="mt-2 bg-black text-white"
-                  onClick={handleSummarize}
-                  disabled={isLoading}
-                >
-                  Summarize
-                </Button>
-                {isLoading ? (
-                  <div className="flex items-center justify-center mt-4 w-full">
-                    <Progress value={progress} className="mx-auto w-full" />
-                    <p className="ml-2 text-black">Processing your request</p>
-                  </div>
-                ) : summary && (
-                  <div className="mt-4">
-                    <DialogTitle>Summary</DialogTitle>
-                    <DialogDescription className="text-gray-500">
-                      Here is a summary of the text you requested
-                    </DialogDescription>
-                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
-                      <MarkdownEditor
-                        defaultContent={summary}
-                        readOnly={true}
-                        hideToolbar={true}
-                      />
-                    </div>
-                    <Button className="mt-2 bg-black text-white" onClick={handleCopySummary}>Copy text</Button>
-                  </div>
-                )}
-              </DialogContent>
-            </Dialog>
+  <DialogTrigger asChild>
+    <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
+  </DialogTrigger>
+  <DialogContent
+    className="bg-white text-black w-[250px] max-w-5xl flex flex-col items-center"
+    style={{ minWidth: 700 }}
+  >
+    <DialogTitle className="w-full text-center">Summarize Note</DialogTitle>
+    <DialogDescription className="text-gray-500 w-full text-center">
+      Choose summary length:
+    </DialogDescription>
+    <RadioGroup
+      value={summaryLength}
+      onValueChange={setSummaryLength}
+      className="flex flex-col gap-2 my-2 items-center"
+    >
+      <label className="flex items-center gap-2">
+        <RadioGroupItem value="one" /> One paragraph
+      </label>
+      <label className="flex items-center gap-2">
+        <RadioGroupItem value="two" /> Two paragraphs
+      </label>
+    </RadioGroup>
+    <Button
+      className="mt-2 bg-black text-white mx-auto"
+      onClick={handleSummarize}
+      disabled={isLoading}
+    >
+      Summarize
+    </Button>
+    {isLoading ? (
+      <div className="flex flex-col items-center justify-center mt-4 w-full">
+        <Progress value={progress} className="mx-auto w-full" />
+        <p className="ml-2 text-black text-center">Processing your request</p>
+      </div>
+    ) : summary && (
+      <div className="mt-4 w-full flex flex-col items-center">
+        <DialogTitle className="w-full text-center">Summary</DialogTitle>
+        <DialogDescription className="text-gray-500 w-full text-center">
+          Here is a summary of the text you requested
+        </DialogDescription>
+        <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+          <MarkdownEditor
+            defaultContent={summary}
+            readOnly={true}
+            hideToolbar={true}
+          />
+        </div>
+        <Button className="mt-2 bg-black text-white mx-auto" onClick={handleCopySummary}>Copy text</Button>
+      </div>
+    )}
+  </DialogContent>
+</Dialog>
           </div>
         </div>
       </SidebarInset>
