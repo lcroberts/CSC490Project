@@ -172,7 +172,7 @@ const MediaUploadButton = () => {
             onChange={onChange}
             type="file"
             accept="image/*, video/*, audio/*"
-            className={`media-upload w-full ${status === "error" ? "text-red-600" : "text-slate-600"} font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-black file:hover:bg-primary/90 file:text-white rounded-sm`}
+            className={`h-fit media-upload w-full ${status === "error" ? "text-red-600" : "text-slate-600"} font-medium text-base bg-gray-100 file:cursor-pointer cursor-pointer file:border-0 file:py-2.5 file:px-4 file:mr-4 file:bg-black file:hover:bg-primary/90 file:text-white rounded`}
             ref={contentRef}
           />
           {status === "error" &&
