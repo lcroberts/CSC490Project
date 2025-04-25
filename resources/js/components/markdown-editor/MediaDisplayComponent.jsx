@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { Textarea } from "../ui/textarea";
 import Spinner from "../ui/spinner";
+import useAppState from "@/hooks/useAppState";
 
 const MediaDisplayComponent = () => {
   const { node, setAttrs } = useNodeViewContext();
   const [altShown, setAltShown] = useState(false);
   const http = useAxios();
   const [src, setSrc] = useState(null);
+  const { activeNoteInfo } = useAppState();
 
   useEffect(() => {
     if (isUrl(node.attrs.src)) {
@@ -18,7 +20,7 @@ const MediaDisplayComponent = () => {
     } else {
       // Fetch media from server in this case
       const func = async () => {
-        const noteId = 1;
+        const noteId = activeNoteInfo.id;
         let contents = await http.get(`/api/media/${noteId}/${node.attrs.src}`);
         contents = contents.data.body;
         const key = await getEncryptionKey();
@@ -68,7 +70,7 @@ const MediaDisplayComponent = () => {
         </>
         :
         <div className="flex gap-4 items-center">
-          <Spinner className={"w-8 h-8"}/>
+          <Spinner className={"w-8 h-8"} />
           <span className="text-lg">Fetching Media</span>
         </div>
       }
