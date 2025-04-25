@@ -110,8 +110,7 @@ export default function Dashboard() {
       if (error.response && error.response.status === 422) {
         setSummary('Invalid content. Please provide valid text to summarize.');
       } else {
-        setSummary(`Summary:  
-The document appears to be a simple text example featuring a greeting ("hello") followed by a section labeled as "media". The structure includes a clear separation between lines, suggesting a form of organization or formatting technique. The usage of brackets and colons could imply a specific formatting or markup language, potentially for coding or content management purposes. However, the content does not provide any extensive information beyond this basic greeting and formatting elements. Overall, it serves as a straightforward illustration of how text can be organized or displayed in certain formats.`);
+        setSummary('Failed to fetch summary. Please try again later.');
       }
     } finally {
       setIsLoading(false);
@@ -238,59 +237,59 @@ The document appears to be a simple text example featuring a greeting ("hello") 
               </DialogContent>
             </Dialog>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-  <DialogTrigger asChild>
-    <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
-  </DialogTrigger>
-  <DialogContent
-    className="bg-white text-black w-[250px] max-w-5xl flex flex-col items-center"
-    style={{ minWidth: 700 }}
-  >
-    <DialogTitle className="w-full text-center">Summarize Note</DialogTitle>
-    <DialogDescription className="text-gray-500 w-full text-center">
-      Choose summary length:
-    </DialogDescription>
-    <RadioGroup
-      value={summaryLength}
-      onValueChange={setSummaryLength}
-      className="flex flex-col gap-2 my-2 items-center"
-    >
-      <label className="flex items-center gap-2">
-        <RadioGroupItem value="one" /> One paragraph
-      </label>
-      <label className="flex items-center gap-2">
-        <RadioGroupItem value="two" /> Two paragraphs
-      </label>
-    </RadioGroup>
-    <Button
-      className="mt-2 bg-black text-white mx-auto"
-      onClick={handleSummarize}
-      disabled={isLoading}
-    >
-      Summarize
-    </Button>
-    {isLoading ? (
-      <div className="flex flex-col items-center justify-center mt-4 w-full">
-        <Progress value={progress} className="mx-auto w-full" />
-        <p className="ml-2 text-black text-center">Processing your request</p>
-      </div>
-    ) : summary && (
-      <div className="mt-4 w-full flex flex-col items-center">
-        <DialogTitle className="w-full text-center">Summary</DialogTitle>
-        <DialogDescription className="text-gray-500 w-full text-center">
-          Here is a summary of the text you requested
-        </DialogDescription>
-        <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
-          <MarkdownEditor
-            defaultContent={summary}
-            readOnly={true}
-            hideToolbar={true}
-          />
-        </div>
-        <Button className="mt-2 bg-black text-white mx-auto" onClick={handleCopySummary}>Copy text</Button>
-      </div>
-    )}
-  </DialogContent>
-</Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-black text-white" onClick={handleDialogOpen}>Summarize</Button>
+              </DialogTrigger>
+              <DialogContent
+                className="bg-white text-black w-[250px] max-w-5xl flex flex-col items-center"
+                style={{ minWidth: 700 }}
+              >
+                <DialogTitle className="w-full text-center">Summarize Note</DialogTitle>
+                <DialogDescription className="text-gray-500 w-full text-center">
+                  Choose summary length:
+                </DialogDescription>
+                <RadioGroup
+                  value={summaryLength}
+                  onValueChange={setSummaryLength}
+                  className="flex flex-col gap-2 my-2 items-center"
+                >
+                  <label className="flex items-center gap-2">
+                    <RadioGroupItem value="one" /> One paragraph
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <RadioGroupItem value="two" /> Two paragraphs
+                  </label>
+                </RadioGroup>
+                <Button
+                  className="mt-2 bg-black text-white mx-auto"
+                  onClick={handleSummarize}
+                  disabled={isLoading}
+                >
+                  Summarize
+                </Button>
+                {isLoading ? (
+                  <div className="flex flex-col items-center justify-center mt-4 w-full">
+                    <Progress value={progress} className="mx-auto w-full" />
+                    <p className="ml-2 text-black text-center">Processing your request</p>
+                  </div>
+                ) : summary && (
+                  <div className="mt-4 w-full flex flex-col items-center">
+                    <DialogTitle className="w-full text-center">Summary</DialogTitle>
+                    <DialogDescription className="text-gray-500 w-full text-center">
+                      Here is a summary of the text you requested
+                    </DialogDescription>
+                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                      <MarkdownEditor
+                        defaultContent={summary}
+                        readOnly={true}
+                        hideToolbar={true}
+                      />
+                    </div>
+                    <Button className="mt-2 bg-black text-white mx-auto" onClick={handleCopySummary}>Copy text</Button>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </SidebarInset>
