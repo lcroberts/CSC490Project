@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { usePage } from '@inertiajs/react';
 import useAppState from '@/hooks/useAppState';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -40,6 +40,27 @@ export default function Dashboard() {
   const [tagMode, setTagMode] = useState("auto"); // Use "auto" or "manual"
   const [manualTags, setManualTags] = useState("");
   const manualTagInputRef = useRef(null);
+
+  // Progress bar animation effect
+  useEffect(() => {
+    let interval;
+    if (isLoading) {
+      setProgress(0);
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 90) {
+            return prev + Math.random() * 10;
+          }
+          return prev;
+        });
+      }, 300);
+    } else if (!isLoading && progress !== 0) {
+      setProgress(100);
+      const timeout = setTimeout(() => setProgress(0), 500);
+      return () => clearTimeout(timeout);
+    }
+    return () => clearInterval(interval);
+  }, [isLoading]);
 
   const refreshNotes = async () => {
     try {
@@ -130,6 +151,17 @@ export default function Dashboard() {
       console.error("Failed to generate tags", err);
     }
     setIsTagDialogOpen(false);
+  };
+
+  // Copy summary to clipboard
+  const handleCopySummary = async () => {
+    if (summary) {
+      try {
+        await navigator.clipboard.writeText(summary);
+      } catch (err) {
+        // fallback or error handling
+      }
+    }
   };
 
   return (
@@ -234,8 +266,8 @@ export default function Dashboard() {
                   Summarize
                 </Button>
                 {isLoading ? (
-                  <div className="flex items-center justify-center mt-4">
-                    <Progress value={progress} className="mx-auto" />
+                  <div className="flex items-center justify-center mt-4 w-full">
+                    <Progress value={progress} className="mx-auto w-full" />
                     <p className="ml-2 text-black">Processing your request</p>
                   </div>
                 ) : summary && (
@@ -244,16 +276,14 @@ export default function Dashboard() {
                     <DialogDescription className="text-gray-500">
                       Here is a summary of the text you requested
                     </DialogDescription>
-                    <div className="flex min-h-[80px] w-full rounded-md border border-input bg-gray-200 px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
-                      <TypeAnimation
-                        sequence={[ summary ]}
-                        wrapper="div"
-                        cursor={true}
-                        speed={85}
-                        repeat={0}
+                    <div className="flex min-h-[80px] w-full rounded-md border border-input bg-white px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                      <MarkdownEditor
+                        defaultContent={summary}
+                        readOnly={true}
+                        hideToolbar={true}
                       />
                     </div>
-                    <Button className="mt-2 bg-black text-white">Copy text</Button>
+                    <Button className="mt-2 bg-black text-white" onClick={handleCopySummary}>Copy text</Button>
                   </div>
                 )}
               </DialogContent>
