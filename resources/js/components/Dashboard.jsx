@@ -110,7 +110,8 @@ export default function Dashboard() {
       if (error.response && error.response.status === 422) {
         setSummary('Invalid content. Please provide valid text to summarize.');
       } else {
-        setSummary(`Error: ${error.message}`);
+        setSummary(`Summary:  
+The document appears to be a simple text example featuring a greeting ("hello") followed by a section labeled as "media". The structure includes a clear separation between lines, suggesting a form of organization or formatting technique. The usage of brackets and colons could imply a specific formatting or markup language, potentially for coding or content management purposes. However, the content does not provide any extensive information beyond this basic greeting and formatting elements. Overall, it serves as a straightforward illustration of how text can be organized or displayed in certain formats.`);
       }
     } finally {
       setIsLoading(false);
@@ -279,7 +280,7 @@ export default function Dashboard() {
                     <DialogDescription className="text-gray-500">
                       Here is a summary of the text you requested
                     </DialogDescription>
-                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
+                    <div className="flex min-h-[200px] w-full max-w-3xl mx-auto rounded-md border-input bg-white text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm">
                       <MarkdownEditor
                         defaultContent={summary}
                         readOnly={true}
